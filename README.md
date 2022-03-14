@@ -12,10 +12,8 @@
 <br />
 <div align="center">
   <a href="https://github.com/aberenguerpas/opendatacrawler">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.png" alt="Logo" width="200" height="200">
   </a>
-
-  <h3 align="center">Open data crawler</h3>
 
   <p align="center">
     A tool to craw data to your projects from open data portals
