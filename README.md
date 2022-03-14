@@ -75,13 +75,16 @@ To get a local copy up and running follow these simple example steps.
 
 * Clone the repo
   ```sh
-   git clone https://github.com/aberenguerpas/opendatacrawler.git
+  git clone https://github.com/aberenguerpas/opendatacrawler.git
   ```
-
+* Move to root directory
+  ````sh
+  cd opendatacrawler
+  ```
 * Install the requirements from requirements.txt
 
   ```sh
-      pip install -r requirements.txt
+  pip install -r requirements.txt
   ```
 
 * Socrata portals requiere an app token to avoid throttling limits, you can obtain an api key [here](https://support.socrata.com/hc/en-us/articles/210138558-Generating-an-App-Token)
@@ -104,23 +107,23 @@ Use this tool is very simple, you only need to specify the data source and the t
 ### Examples
 #### Dowload all data from a portal:
 ```
-python -m odc -d https://data.smartdublin.ie/
+python opendatacrawler -d https://data.smartdublin.ie/
 ```
 #### Dowload all data with their metadata:
 ```
-python -m odc -d https://data.smartdublin.ie/ -m
+python opendatacrawler -d https://data.smartdublin.ie/ -m
 ```
 #### Dowload specific fromat data. For example xls and csv:
 ```
-python -m odc -d https://data.smartdublin.ie/ -t xls csv
+python opendatacrawler -d https://data.smartdublin.ie/ -t xls csv
 ```
 #### Dowload specifics categories. For example xls and csv:
 ```
-python -m odc -d https://data.smartdublin.ie/ -c tourism transport
+python opendatacrawler -d https://data.smartdublin.ie/ -c tourism transport
 ```
 #### Help with all posible commands:
 ```
-python -m odc -h
+python opendatacrawler -h
 ```
 
 
