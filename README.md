@@ -79,6 +79,7 @@ To get a local copy up and running follow these simple example steps.
   ````sh
   cd opendatacrawler
   ```
+  
 * Install the requirements from requirements.txt
 
   ```sh
