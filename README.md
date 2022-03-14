@@ -162,7 +162,7 @@ Don't forget to give the project a star! Thanks again!
 ### Add support to other portal
 1. Create a file with the name of the portal + crawler Ex. ```examplecrawler.py``` inside the folder ```opendatacrawler```
 2. Create a class ExampleCrawler who inherits from ```OpenDataCrawlerInterface```
-3. The class must contain at least the functions ```get_package_list()``` and ```get_package()```. Check the descriptions of the functions on the ```opendatacrawlerInterface.py````
+3. The class must contain at least the functions ```get_package_list()``` and ```get_package()```. Check the descriptions of the functions on the ```opendatacrawlerInterface.py```
 4. You can also use or add some functions to utils.py
 5. Add in the function ```detect_dms()``` on ```odcrawler.py``` a way to detect the site you want to add.
 
