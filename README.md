@@ -104,23 +104,23 @@ Use this tool is very simple, you only need to specify the data source and the t
 ### Examples
 #### Dowload all data from a portal:
 ```
-python -m odc -d https://data.smartdublin.ie/
+python opendatacrawler -d https://data.smartdublin.ie/
 ```
 #### Dowload all data with their metadata:
 ```
-python -m odc -d https://data.smartdublin.ie/ -m
+python opendatacrawler -d https://data.smartdublin.ie/ -m
 ```
 #### Dowload specific fromat data. For example xls and csv:
 ```
-python -m odc -d https://data.smartdublin.ie/ -t xls csv
+python opendatacrawler -d https://data.smartdublin.ie/ -t xls csv
 ```
 #### Dowload specifics categories. For example xls and csv:
 ```
-python -m odc -d https://data.smartdublin.ie/ -c tourism transport
+python opendatacrawler -d https://data.smartdublin.ie/ -c tourism transport
 ```
 #### Help with all posible commands:
 ```
-python -m odc -h
+python opendatacrawler -h
 ```
 
 
