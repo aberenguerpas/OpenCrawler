@@ -136,3 +136,7 @@ dmypy.json
 
 # my env
 /myenv
+
+.vscode/
+
+.DS_Store

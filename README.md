@@ -18,7 +18,7 @@
   <h3 align="center">Open data crawler</h3>
 
   <p align="center">
-    An awesome tool to craw data to your projects from open data portals
+    A tool to craw data to your projects from open data portals
     <br />
     <a href="https://github.com/aberenguerpas/opendatacrawler/issues">Report Bug</a>
     ·
@@ -58,7 +58,7 @@ Open Data Crawler is a tool to extract data from open data portals and statistic
 
 Features:
 * Download datasets from open data portals or statsitics portal
-* Download metadata from datasets
+* Download metadata from resources
 * Filter by data type
 * Filter by topic
 
@@ -71,21 +71,25 @@ This is an example of how you may give instructions on setting up your project l
 To get a local copy up and running follow these simple example steps.
 
 ### Requirements
-You need python 3.9 installed
+* You need python 3.9 installed
+
+* Clone the repo
+  ```sh
+   git clone https://github.com/aberenguerpas/opendatacrawler.git
+  ```
 
 * Install the requirements from requirements.txt
 
-* ```sh
-    pip install -r requirements.txt
-    ```
+  ```sh
+      pip install -r requirements.txt
+  ```
+
+* Socrata portals requiere an app token to avoid throttling limits, you can obtain an api key [here](https://support.socrata.com/hc/en-us/articles/210138558-Generating-an-App-Token)
+and set on ```config.ini```
 
 ### Installation
 
-1. Clone the repo
-   ```sh
-   git clone https://github.com/aberenguerpas/opendatacrawler.git
-   ```
-2. Run from the project root
+1. Run from the project root
    ```sh
    python setup.py install 
    ```
@@ -100,23 +104,23 @@ Use this tool is very simple, you only need to specify the data source and the t
 ### Examples
 #### Dowload all data from a portal:
 ```
-python -m opendatacrawler -d https://data.smartdublin.ie/
+python -m odc -d https://data.smartdublin.ie/
 ```
 #### Dowload all data with their metadata:
 ```
-python -m opendatacrawler -d https://data.smartdublin.ie/ -m
+python -m odc -d https://data.smartdublin.ie/ -m
 ```
 #### Dowload specific fromat data. For example xls and csv:
 ```
-python -m opendatacrawler -d https://data.smartdublin.ie/ -t xls csv
+python -m odc -d https://data.smartdublin.ie/ -t xls csv
 ```
 #### Dowload specifics categories. For example xls and csv:
 ```
-python -m opendatacrawler -d https://data.smartdublin.ie/ -c tourism transport
+python -m odc -d https://data.smartdublin.ie/ -c tourism transport
 ```
 #### Help with all posible commands:
 ```
-python -m opendatacrawler -h
+python -m odc -h
 ```
 
 
@@ -129,9 +133,10 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 - [x] CKAN 
 - [x] Socrata
-- [x] https://databank.worldbank.org/
-- [x] https://data.oecd.org/
+- [x] https://ec.europa.eu/eurostat (LIMITED ⚠️)*
+- [x] https://datacatalogapi.worldbank.org/ (LIMITED ⚠️)*
 
+\* Works with restrictions or download limitations
 
 See the [open issues](https://github.com/aberenguerpas/opendatacrawler/issues) for a full list of proposed features (and known issues).
 
@@ -152,6 +157,13 @@ Don't forget to give the project a star! Thanks again!
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+### Add support to other portal
+1. Create a file with the name of the portal + crawler Ex. ```examplecrawler.py``` inside the folder ```opendatacrawler```
+2. Create a class ExampleCrawler who inherits from ```OpenDataCrawlerInterface```
+3. The class must contain at least the functions ```get_package_list()``` and ```get_package()```. Check the descriptions of the functions on the ```opendatacrawlerInterface.py````
+4. You can also use or add some functions to utils.py
+5. Add in the function ```detect_dms()``` on ```odcrawler.py``` a way to detect the site you want to add.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
