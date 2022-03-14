@@ -81,7 +81,7 @@ To get a local copy up and running follow these simple example steps.
 * Install the requirements from requirements.txt
 
   ```sh
-      pip install -r requirements.txt
+   pip install -r requirements.txt
   ```
 
 * Socrata portals requiere an app token to avoid throttling limits, you can obtain an api key [here](https://support.socrata.com/hc/en-us/articles/210138558-Generating-an-App-Token)
