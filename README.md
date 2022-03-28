@@ -83,7 +83,7 @@ To get a local copy up and running follow these simple example steps.
 * Install the requirements from requirements.txt
 
   ```sh
-  pip install -r requirements.txt
+  pip3 install -r requirements.txt
   ```
 
 * Socrata portals requiere an app token to avoid throttling limits, you can obtain an api key [here](https://support.socrata.com/hc/en-us/articles/210138558-Generating-an-App-Token)
@@ -93,7 +93,7 @@ and set on ```config.ini```
 
 1. Run from the project root
    ```sh
-   python setup.py install 
+   python3 setup.py install 
    ```
 <p align="right">(<a href="#top">back to top</a>)</p>
 
