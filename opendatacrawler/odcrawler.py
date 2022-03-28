@@ -1,3 +1,4 @@
+from typing import Any
 import requests
 import json
 import utils
@@ -9,16 +10,17 @@ from worldbankcrawler import WorldBankCrawler
 from eurostatcrawler import EurostatCrawler
 from setup_logger import logger
 from sys import exit
-
+import time
 
 class OpenDataCrawler():
 
     def __init__(self, domain, path,
-                 data_types=None):
+                 data_types=None, sec=Any):
 
         self.domain = domain
         self.dms = None
         self.dms_instance = None
+        self.max_sec = sec
         if not path:
             directory = os.getcwd()
             path = directory+"/data/"
@@ -83,31 +85,40 @@ class OpenDataCrawler():
 
                 logger.info("Saving... %s ", url)
 
-                r = requests.get(url)
+                with requests.get(url, stream=True, timeout=30) as r:
+                    if r.status_code == 200:
+                        # Try to obtain the file name inside the link, else
+                        # use the last part of the url with the dataset extension
+                        if "Content-Disposition" in r.headers.keys():
+                            fname = re.findall("filename=(.+)", r.headers["Content-Disposition"])[0]
+                        else:
+                            fname = url.split("/")[-1]
+                            if len(fname.split(".")) == 1:
+                                fname += "."+ext
 
-                if r.status_code == 200:
-                    # Try to obtain the file name inside the link, else
-                    # use the last part of the url with the dataset extension
-                    if "Content-Disposition" in r.headers.keys():
-                        fname = re.findall("filename=(.+)", r.headers["Content-Disposition"])[0]
+                        path = self.save_path+"/"+fname.replace('"', '')
+
+                        # Write the content on a file
+                        with open(path, 'wb') as outfile:
+                            t = time.time()
+                            partial = False
+                            for chunk in r.iter_content(chunk_size=8192):
+
+                                if (time.time() - t) > self.max_sec:
+                                    partial = True
+                                    logger.warning('Timeout! Partially downloaded file %s', url)
+                                    break
+                                
+                                outfile.write(chunk)
+
+                        if not partial:
+                            logger.info("Dataset saved from %s", url)
+
+                        return path
                     else:
-                        fname = url.split("/")[-1]
-                        if len(fname.split(".")) == 1:
-                            fname += "."+ext
+                        logger.warning('Problem obtaining the resource %s', url)
 
-                    path = self.save_path+"/"+fname.replace('"', '')
-
-                    # Write the content on a file
-                    with open(path, 'wb') as outfile:
-                        outfile.write(r.content)
-
-                    logger.info("Dataset saved from %s", url)
-
-                    return path
-                else:
-                    logger.warning('Problem obtaining the resource %s', url)
-
-                    return None
+                        return None
 
         except Exception as e:
             logger.error('Error saving dataset from %s', url)

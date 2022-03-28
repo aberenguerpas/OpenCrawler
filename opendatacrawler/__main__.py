@@ -28,6 +28,9 @@ def main():
     parser.add_argument('-p', '--path', type=str, required=False,
                         help="Path to save data (Ex. -p /my/example/path/)")
 
+    parser.add_argument('-s', '--max_seconds', type=int, required=False,
+                        help="Max seconds employed downloading a file (Ex. -s 60)")
+
     args = vars(parser.parse_args())
 
     # Save the arguments into variables
@@ -36,6 +39,7 @@ def main():
     save_meta = args['save_meta']
     categories = utils.lower_list(args['categories'])
     d_path = args['path']
+    max_sec = args['max_seconds']
 
     # Show the intro text
 
@@ -43,7 +47,7 @@ def main():
 
     if utils.check_url(url):
 
-        crawler = OpenDataCrawler(url, path=d_path, data_types=d_types)
+        crawler = OpenDataCrawler(url, path=d_path, data_types=d_types, sec=max_sec)
 
         if crawler.dms:
 
@@ -57,6 +61,7 @@ def main():
             if packages:
                 # Iterate over each package obtaining the info and saving the dataset
                 for id in tqdm(packages, desc="Processing", colour="green"):
+
                     package = crawler.get_package(id)
 
                     if package:

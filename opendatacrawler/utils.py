@@ -3,6 +3,7 @@ from w3lib.url import url_query_cleaner
 from url_normalize import url_normalize
 import os
 import pathlib
+import time
 
 
 def clean_url(u):
@@ -84,3 +85,4 @@ def print_intro():
     f = open(path + "/intro.txt", "r")
     for x in f:
         print(x, end='')
+
