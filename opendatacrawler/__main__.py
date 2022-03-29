@@ -45,49 +45,69 @@ def main():
 
     utils.print_intro()
 
-    if utils.check_url(url):
+    last_id = None  # Last id save on the file
+    save_id = None  # Last id processed
 
-        crawler = OpenDataCrawler(url, path=d_path, data_types=d_types, sec=max_sec)
+    try:
+        if utils.check_url(url):
 
-        if crawler.dms:
+            crawler = OpenDataCrawler(url, path=d_path, data_types=d_types, sec=max_sec)
 
-            # Show info about the number of packages
-            logger.info("Obtaining packages from %s", url)
-            print("Obtaining packages from " + url)
-            packages = crawler.get_package_list()
-            logger.info("%i packages found", len(packages))
-            print(str(len(packages)) + " packages found!")
+            last_id = utils.load_resume_id(crawler.resume_path)
 
-            if packages:
-                # Iterate over each package obtaining the info and saving the dataset
-                for id in tqdm(packages, desc="Processing", colour="green"):
+            if crawler.dms:
 
-                    package = crawler.get_package(id)
+                # Show info about the number of packages
+                logger.info("Obtaining packages from %s", url)
+                print("Obtaining packages from " + url)
+                packages = crawler.get_package_list()
+                logger.info("%i packages found", len(packages))
+                print(str(len(packages)) + " packages found!")
 
-                    if package:
+                jump_execution = True
 
-                        if args['categories'] and package['theme']:
-                            exist_cat = any(cat in package['theme'] for cat in categories)
+                if packages:
+                    # Iterate over each package obtaining the info and saving the dataset
+                    for id in tqdm(packages, desc="Processing", colour="green"):
+
+                        if jump_execution and last_id != id:
+                            continue
                         else:
-                            exist_cat = True
+                            jump_execution = False
 
-                        resources_save = False
-                        if len(package['resources']) > 0 and exist_cat:
-                            for r in package['resources']:
-                                if(r['downloadUrl'] and r['mediaType'] != ""):
+                        package = crawler.get_package(id)
 
-                                    r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
-                                    if r['path']:
-                                        resources_save = True
+                        if package:
 
-                            if save_meta and resources_save:
-                                crawler.save_metadata(package)
-            else:
-                print("Error ocurred while obtain packages")
+                            if args['categories'] and package['theme']:
+                                exist_cat = any(cat in package['theme'] for cat in categories)
+                            else:
+                                exist_cat = True
 
-    else:
-        print("Incorrect domain form.\nMust have the form "
-              "https://domain.example or http://domain.example")
+                            resources_save = False
+                            if len(package['resources']) > 0 and exist_cat:
+                                for r in package['resources']:
+                                    if(r['downloadUrl'] and r['mediaType'] != ""):
+
+                                        r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
+                                        if r['path']:
+                                            resources_save = True
+                                        save_id = id
+
+                                if save_meta and resources_save:
+                                    crawler.save_metadata(package)
+
+                else:
+                    print("Error ocurred while obtain packages")
+
+        else:
+            print("Incorrect domain form.\nMust have the form "
+                "https://domain.example or http://domain.example")
+
+    except Exception:
+        print('Keyboard interrumption!')
+    finally:
+        utils.save_resume_id(crawler.resume_path, save_id)
 
 
 if __name__ == "__main__":

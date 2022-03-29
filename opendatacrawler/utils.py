@@ -86,3 +86,17 @@ def print_intro():
     for x in f:
         print(x, end='')
 
+
+def load_resume_id(path):
+    try:
+        f = open(path, "r")
+        return f.read()
+
+    except Exception:
+        return None
+
+
+def save_resume_id(path, id):
+    f = open(path, "w")
+    f.write(id)
+    f.close()

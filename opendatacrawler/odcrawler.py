@@ -12,6 +12,7 @@ from setup_logger import logger
 from sys import exit
 import time
 
+
 class OpenDataCrawler():
 
     def __init__(self, domain, path,
@@ -26,6 +27,7 @@ class OpenDataCrawler():
             path = directory+"/data/"
             utils.create_folder(path)
         self.save_path = path + utils.clean_url(self.domain)
+        self.resume_path = path + "resume_"+utils.clean_url(self.domain)+".txt"
 
         if data_types:
             self.data_types = [x.lower() for x in list(data_types)]
