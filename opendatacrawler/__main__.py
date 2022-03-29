@@ -3,6 +3,7 @@ import utils
 from odcrawler import OpenDataCrawler
 from tqdm import tqdm
 from setup_logger import logger
+import traceback
 
 
 def main():
@@ -90,7 +91,7 @@ def main():
                             if len(package['resources']) > 0 and exist_cat:
                                 for r in package['resources']:
                                     if(r['downloadUrl'] and r['mediaType'] != ""):
-
+					
                                         r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
                                         if r['path']:
                                             resources_save = True
@@ -108,7 +109,9 @@ def main():
 
         utils.remove_resume_id(crawler.resume_path)
 
-    except Exception:
+    except Exception as e:
+
+        print(traceback.format_exc())
         print('Keyboard interrumption!')
     finally:
         utils.save_resume_id(crawler.resume_path, save_id)

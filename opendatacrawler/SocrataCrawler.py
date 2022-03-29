@@ -1,7 +1,7 @@
 from sodapy import Socrata
 import utils
 from opendatacrawlerInterface import OpenDataCrawlerInterface as interface
-
+from setup_logger import logger
 
 class SocrataCrawler(interface):
     def __init__(self, domain, data_types):
@@ -20,8 +20,11 @@ class SocrataCrawler(interface):
 
     def get_package(self, id):
         """Build a dict of package metadata"""
-
-        meta = self.client.get_metadata(id)
+        try:
+            meta = self.client.get_metadata(id)
+        except Exception:
+            logger.warning("Metadata can't be collected %s", id)
+            return None
 
         metadata = dict()
 

@@ -129,10 +129,10 @@ dmypy.json
 .pyre/
 
 # data
-/data/*
+*/data/*
 
 # logs
-/logs/*
+*/logs/*
 
 # my env
 /myenv
