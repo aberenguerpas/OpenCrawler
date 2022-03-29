@@ -47,6 +47,7 @@ def main():
 
     last_id = None  # Last id save on the file
     save_id = None  # Last id processed
+    jump_execution = True
 
     try:
         if utils.check_url(url):
@@ -64,7 +65,8 @@ def main():
                 logger.info("%i packages found", len(packages))
                 print(str(len(packages)) + " packages found!")
 
-                jump_execution = True
+                if last_id is None or last_id == "":
+                    jump_execution = False
 
                 if packages:
                     # Iterate over each package obtaining the info and saving the dataset
