@@ -100,3 +100,9 @@ def save_resume_id(path, id):
     f = open(path, "w")
     f.write(id)
     f.close()
+
+
+def remove_resume_id(path):
+
+    if os.path.exists(path):
+        os.remove(path)

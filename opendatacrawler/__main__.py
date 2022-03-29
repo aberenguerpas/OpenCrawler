@@ -104,6 +104,8 @@ def main():
             print("Incorrect domain form.\nMust have the form "
                 "https://domain.example or http://domain.example")
 
+        utils.remove_resume_id(crawler.resume_path)
+
     except Exception:
         print('Keyboard interrumption!')
     finally:
