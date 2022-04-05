@@ -107,14 +107,15 @@ def main():
             print("Incorrect domain form.\nMust have the form "
                 "https://domain.example or http://domain.example")
 
-        utils.remove_resume_id(crawler.resume_path)
-
     except Exception as e:
 
         print(traceback.format_exc())
         print('Keyboard interrumption!')
     finally:
-        utils.save_resume_id(crawler.resume_path, save_id)
+        if save_id:
+            utils.save_resume_id(crawler.resume_path, save_id)
+
+    utils.remove_resume_id(crawler.resume_path)
 
 
 if __name__ == "__main__":

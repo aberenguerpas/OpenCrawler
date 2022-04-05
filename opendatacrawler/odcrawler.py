@@ -8,6 +8,7 @@ from SocrataCrawler import SocrataCrawler
 from CkanCrawler import CkanCrawler
 from worldbankcrawler import WorldBankCrawler
 from eurostatcrawler import EurostatCrawler
+from datosgobescrawler import datosGobEsCrawler
 from setup_logger import logger
 from sys import exit
 import time
@@ -45,6 +46,7 @@ class OpenDataCrawler():
         dms['CKAN'] = "/api/3/action/package_list"
         dms['WorldBank'] = '/ddhxext/DatasetList'
         dms['EuroStat'] = '/estat-navtree-portlet-prod/BulkDownloadListing?sort=1&dir=metadata'
+        dms['datosGobEs'] = '/apidata/catalog/dataset?_sort=title&_pageSize=1'
 
         for k, v in dms.items():
             try:
@@ -53,7 +55,6 @@ class OpenDataCrawler():
                     self.domain = self.domain[:-1]
 
                 response = requests.get(self.domain+v)
-
                 # If the content-type not is a webpage(we want a json api response) and the result code is 200
                 if response.status_code == 200 and response.headers['Content-Type']!="text/html":
                     self.dms = k
@@ -75,6 +76,9 @@ class OpenDataCrawler():
             self.dms_instance = WorldBankCrawler(self.domain, self.data_types)
         if self.dms == 'EuroStat':
             self.dms_instance = EurostatCrawler(self.domain)
+
+        if self.dms == 'datosGobEs':
+            self.dms_instance = datosGobEsCrawler(self.domain, self.data_types)
         if self.dms is None:
             print("The domain " + self.domain + " is not supported yet")
             logger.info("DMS not detected in %s", self.domain)

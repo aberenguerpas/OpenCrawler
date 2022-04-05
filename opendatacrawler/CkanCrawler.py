@@ -59,38 +59,40 @@ class CkanCrawler(interface):
         try:
             url = self.domain + "/api/3/action/package_show?id=" + id
             response = requests.get(url)
+    
+            if response.status_code == 200:
+                meta = response.json()['result']
+
+                metadata = dict()
+
+                metadata['identifier'] = id
+                metadata['title'] = meta.get('title', None)
+                metadata['description'] = meta.get('notes', None)
+                metadata['theme'] = meta.get('category', None)
+
+                if metadata['theme'] is None:
+                    metadata['theme'] = utils.extract_tags(meta.get('tags', None))
+
+                resource_list = []
+                for res in meta['resources']:
+                    if (self.data_types is None or
+                    res['format'].lower() in self.data_types):
+                        aux = dict()
+                        aux['name'] = res.get('name', None)
+                        aux['downloadUrl'] = res.get('url', None)
+                        aux['mediaType'] = res['format'].lower()
+                        id = res.get('url', None).split("/")[-1].split(".")[0]
+                        resource_list.append(aux)
+
+                metadata['resources'] = resource_list
+                metadata['modified'] = meta.get('metadata_modified', None)
+                metadata['license'] = meta.get('license_title', None)
+                metadata['source'] = self.domain
+
+                return metadata
+            else:
+                return None
+
         except Exception as e:
             logger.error(e)
-
-        if response.status_code == 200:
-            meta = response.json()['result']
-
-            metadata = dict()
-
-            metadata['identifier'] = id
-            metadata['title'] = meta.get('title', None)
-            metadata['description'] = meta.get('notes', None)
-            metadata['theme'] = meta.get('category', None)
-
-            if metadata['theme'] is None:
-                metadata['theme'] = utils.extract_tags(meta.get('tags', None))
-
-            resource_list = []
-            for res in meta['resources']:
-                if (self.data_types is None or
-                   res['format'].lower() in self.data_types):
-                    aux = dict()
-                    aux['name'] = res.get('name', None)
-                    aux['downloadUrl'] = res.get('url', None)
-                    aux['mediaType'] = res['format'].lower()
-                    id = res.get('url', None).split("/")[-1].split(".")[0]
-                    resource_list.append(aux)
-
-            metadata['resources'] = resource_list
-            metadata['modified'] = meta.get('metadata_modified', None)
-            metadata['license'] = meta.get('license_title', None)
-            metadata['source'] = self.domain
-
-            return metadata
-        else:
             return None

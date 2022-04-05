@@ -137,6 +137,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [x] Socrata
 - [x] https://ec.europa.eu/eurostat (LIMITED ⚠️)*
 - [x] https://datacatalogapi.worldbank.org/ (LIMITED ⚠️)*
+- [x] https://datos.gob.es
 
 \* Works with restrictions or download limitations
 
