@@ -49,6 +49,7 @@ def main():
     last_id = None  # Last id save on the file
     save_id = None  # Last id processed
     jump_execution = True
+    crawler = None
 
     try:
         if utils.check_url(url):
@@ -115,7 +116,8 @@ def main():
         if save_id:
             utils.save_resume_id(crawler.resume_path, save_id)
 
-    utils.remove_resume_id(crawler.resume_path)
+    if crawler:
+        utils.remove_resume_id(crawler.resume_path)
 
 
 if __name__ == "__main__":

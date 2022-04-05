@@ -1,3 +1,4 @@
+from cmath import inf
 from typing import Any
 import requests
 import json
@@ -17,7 +18,7 @@ import time
 class OpenDataCrawler():
 
     def __init__(self, domain, path,
-                 data_types=None, sec=Any):
+                 data_types=None, sec=None):
 
         self.domain = domain
         self.dms = None
@@ -91,7 +92,7 @@ class OpenDataCrawler():
 
                 logger.info("Saving... %s ", url)
 
-                with requests.get(url, stream=True, timeout=30) as r:
+                with requests.get(url, stream=True, timeout=60) as r:
                     if r.status_code == 200:
                         # Try to obtain the file name inside the link, else
                         # use the last part of the url with the dataset extension
@@ -110,7 +111,7 @@ class OpenDataCrawler():
                             partial = False
                             for chunk in r.iter_content(chunk_size=8192):
 
-                                if (time.time() - t) > self.max_sec:
+                                if self.max_sec and ((time.time() - t) > self.max_sec):
                                     partial = True
                                     logger.warning('Timeout! Partially downloaded file %s', url)
                                     break
