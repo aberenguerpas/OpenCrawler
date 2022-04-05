@@ -23,7 +23,6 @@ class datosGobEsCrawler(interface):
                     skip += 1
                     for p in packages:
                         ids.append(p['_about'].split("/")[-1])
-                    break
                 else:
                     fin = True
             else:
