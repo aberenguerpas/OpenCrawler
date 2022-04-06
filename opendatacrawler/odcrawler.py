@@ -13,6 +13,7 @@ from datosgobescrawler import datosGobEsCrawler
 from setup_logger import logger
 from sys import exit
 import time
+from clint.textui import progress
 
 
 class OpenDataCrawler():
@@ -109,13 +110,18 @@ class OpenDataCrawler():
                         with open(path, 'wb') as outfile:
                             t = time.time()
                             partial = False
-                            for chunk in r.iter_content(chunk_size=8192):
+                            total_length = int(r.headers.get('content-length'))
+                            for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
 
                                 if self.max_sec and ((time.time() - t) > self.max_sec):
                                     partial = True
                                     logger.warning('Timeout! Partially downloaded file %s', url)
                                     break
-                                
+
+                                if chunk:
+                                    outfile.write(chunk)
+                                    outfile.flush()
+
                                 outfile.write(chunk)
 
                         if not partial:
@@ -130,6 +136,7 @@ class OpenDataCrawler():
         except Exception as e:
             logger.error('Error saving dataset from %s', url)
             logger.error(e)
+            return None
 
     def save_metadata(self, data):
         """ Save the dict containing the metadata on a json file"""
