@@ -13,8 +13,6 @@ from datosgobescrawler import datosGobEsCrawler
 from setup_logger import logger
 from sys import exit
 import time
-from clint.textui import progress
-
 
 class OpenDataCrawler():
 
@@ -110,8 +108,7 @@ class OpenDataCrawler():
                         with open(path, 'wb') as outfile:
                             t = time.time()
                             partial = False
-                            total_length = int(r.headers.get('content-length'))
-                            for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
+                            for chunk in r.iter_content(chunk_size=1024):
 
                                 if self.max_sec and ((time.time() - t) > self.max_sec):
                                     partial = True
@@ -121,8 +118,6 @@ class OpenDataCrawler():
                                 if chunk:
                                     outfile.write(chunk)
                                     outfile.flush()
-
-                                outfile.write(chunk)
 
                         if not partial:
                             logger.info("Dataset saved from %s", url)
