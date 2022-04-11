@@ -1,6 +1,5 @@
-from cmath import inf
-from typing import Any
 import requests
+import urllib3
 import json
 import utils
 import re
@@ -13,6 +12,9 @@ from datosgobescrawler import datosGobEsCrawler
 from setup_logger import logger
 from sys import exit
 import time
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 class OpenDataCrawler():
 
@@ -54,7 +56,7 @@ class OpenDataCrawler():
                 if self.domain[-1] == "/":
                     self.domain = self.domain[:-1]
 
-                response = requests.get(self.domain+v)
+                response = requests.get(self.domain+v, verify=False)
                 # If the content-type not is a webpage(we want a json api response) and the result code is 200
                 if response.status_code == 200 and response.headers['Content-Type']!="text/html":
                     self.dms = k
@@ -91,7 +93,7 @@ class OpenDataCrawler():
 
                 logger.info("Saving... %s ", url)
 
-                with requests.get(url, stream=True, timeout=60) as r:
+                with requests.get(url, stream=True, timeout=60, verify=False) as r:
                     if r.status_code == 200:
                         # Try to obtain the file name inside the link, else
                         # use the last part of the url with the dataset extension
