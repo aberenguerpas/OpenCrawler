@@ -34,6 +34,14 @@ def extract_tags(tags):
     """ Extract the tag names from tag list"""
     return [tag['display_name'] for tag in tags]
 
+def extract_keywords(keywords):
+    """ Extract the keywords from keyword list"""
+    if len(keywords) > 0:
+        theme = keywords.split(", ")
+        return theme
+    else:
+        return None
+
 
 def read_config():
     d = dict()
@@ -44,6 +52,18 @@ def read_config():
     config.read(str(current_path) + '/config.ini')
 
     d['soda_token'] = config['Soda']['token']
+
+    return d
+
+def read_token():
+    d = dict()
+
+    config = configparser.ConfigParser()
+
+    current_path = pathlib.Path(__file__).parent.resolve()
+    config.read(str(current_path) + '/config.ini')
+
+    d['zenodo_token'] = config['Zenodo']['token']
 
     return d
 
