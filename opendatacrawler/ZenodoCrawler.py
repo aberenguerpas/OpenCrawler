@@ -1,6 +1,7 @@
 import requests
 import utils
-import zenodopy
+import time
+import traceback
 from setup_logger import logger
 from opendatacrawlerInterface import OpenDataCrawlerInterface as interface
 
@@ -14,6 +15,7 @@ class ZenodoCrawler(interface):
         token = utils.read_token()['zenodo_token']
         if token == "None" or not token:
             token = None
+        self.token = token
 
     def get_package_list(self):
         """Get all the packages ids"""
@@ -21,7 +23,7 @@ class ZenodoCrawler(interface):
         ids = []
         fin = False
         while not fin:
-            response = requests.get('https://zenodo.org/api/records/?size=200&page='+str(skip))
+            response = requests.get('https://zenodo.org/api/records/?type=dataset&size=200&page='+str(skip)+'&access_token='+str(self.token))
             if response.status_code == 200:
                 packages = response.json()['hits']['hits']
                 if len(packages) > 0:
@@ -40,6 +42,9 @@ class ZenodoCrawler(interface):
             response = requests.get('https://zenodo.org/api/records/' + str(id))
             
             if response.status_code == 200:
+                # Timer start counting
+                utils.timer_start()
+                
                 meta_json = response.json()
 
                 metadata = dict()
@@ -78,10 +83,15 @@ class ZenodoCrawler(interface):
                 
                 return metadata
             else:
-                return None
+                # Timer stops when it can't make any more calls to the API
+                rest = utils.timer_stop()
+                if rest < 60:
+                    time.sleep(60-rest)
         except Exception as e:
+            print(traceback.format_exc())
             logger.info(e)
             return None
+
 
 craw = ZenodoCrawler('https://zenodo.org')
 

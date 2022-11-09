@@ -5,6 +5,27 @@ import os
 import pathlib
 import time
 
+timer = 0
+# Funtions to control a timer for ZenodoCrawler calls to the API
+def timer_start():
+    global timer
+    # Starts if == 0, else it continues
+    if timer == 0:
+        timer = time.perf_counter()
+            
+def timer_stop():
+    global timer
+    # Obtain the time when it stops
+    end = time.perf_counter()
+    rest = end - timer
+    timer_restart()
+    # Returns the total time it has been counting
+    return rest
+
+def timer_restart():
+    global timer
+    # Restarts the timer
+    timer = 0
 
 def clean_url(u):
     """Clean a url string to obtain the mainly domain without protocols."""
