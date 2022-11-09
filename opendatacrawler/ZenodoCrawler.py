@@ -54,12 +54,7 @@ class ZenodoCrawler(interface):
                 meta = meta_json.get('metadata', None)
                 
                 if meta is not None:
-                    grants = meta.get('grants', None)
-                    # 'Title' sometimes is in 'grants'->'title' but it also can be just in 'title'
-                    if grants is not None:
-                        metadata['title'] = grants[0].get('title', None)
-                    else:
-                        metadata['title'] = meta.get('title', None)
+                    metadata['title'] = meta.get('title', None)
                     metadata['description'] = meta.get('description', None)
                     if meta.get('keywords', None) is not None:
                         metadata['theme'] = utils.extract_keywords(meta.get('keywords', None)[0])
@@ -76,7 +71,7 @@ class ZenodoCrawler(interface):
                 resource_list.append(aux)
 
                 metadata['resources'] = resource_list
-                metadata['modified'] = meta_json.get('updated', None)
+                metadata['modified'] = meta.get('publication_date', None)
                 #metadata['license'] = requests.get('https://zenodo.org/api/licenses/')
                 metadata['license'] = None
                 metadata['source'] = self.domain
