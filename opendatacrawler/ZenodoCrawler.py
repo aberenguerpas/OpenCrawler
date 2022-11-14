@@ -1,4 +1,3 @@
-from importlib.util import set_package
 import requests
 import utils
 import time
@@ -82,16 +81,9 @@ class ZenodoCrawler(interface):
                 # Timer stops when it can't make any more calls to the API
                 rest = utils.timer_stop()
                 if rest < 60:
-                    time.sleep(60 - rest + 1)
-                    actual_id = id
-                    return (set_package(actual_id))
+                    time.sleep(60 - rest)
+                    return (self.get_package(id))
         except Exception as e:
             print(traceback.format_exc())
             logger.info(e)
             return None
-
-
-craw = ZenodoCrawler('https://zenodo.org')
-
-for id in craw.get_package_list():
-    print(craw.get_package(id))
