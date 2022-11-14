@@ -57,9 +57,12 @@ def extract_tags(tags):
 
 def extract_keywords(keywords):
     """ Extract the keywords from keyword list"""
-    if len(keywords) > 0:
-        theme = keywords.split(", ")
-        return theme
+    if keywords:
+        if len(keywords) > 0:
+            theme = keywords.split(", ")
+            return theme
+        else:
+            return None
     else:
         return None
 
