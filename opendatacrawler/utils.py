@@ -5,6 +5,27 @@ import os
 import pathlib
 import time
 
+timer = 0
+# Funtions to control a timer for ZenodoCrawler calls to the API
+def timer_start():
+    global timer
+    # Starts if == 0, else it continues
+    if timer == 0:
+        timer = time.perf_counter()
+            
+def timer_stop():
+    global timer
+    # Obtain the time when it stops
+    end = time.perf_counter()
+    rest = end - timer
+    timer_restart()
+    # Returns the total time it has been counting
+    return rest
+
+def timer_restart():
+    global timer
+    # Restarts the timer
+    timer = 0
 
 def clean_url(u):
     """Clean a url string to obtain the mainly domain without protocols."""
@@ -34,6 +55,17 @@ def extract_tags(tags):
     """ Extract the tag names from tag list"""
     return [tag['display_name'] for tag in tags]
 
+def extract_keywords(keywords):
+    """ Extract the keywords from keyword list"""
+    if keywords:
+        if len(keywords) > 0:
+            theme = keywords.split(", ")
+            return theme
+        else:
+            return None
+    else:
+        return None
+
 
 def read_config():
     d = dict()
@@ -44,6 +76,18 @@ def read_config():
     config.read(str(current_path) + '/config.ini')
 
     d['soda_token'] = config['Soda']['token']
+
+    return d
+
+def read_token():
+    d = dict()
+
+    config = configparser.ConfigParser()
+
+    current_path = pathlib.Path(__file__).parent.resolve()
+    config.read(str(current_path) + '/config.ini')
+
+    d['zenodo_token'] = config['Zenodo']['token']
 
     return d
 

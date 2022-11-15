@@ -9,6 +9,7 @@ from CkanCrawler import CkanCrawler
 from worldbankcrawler import WorldBankCrawler
 from eurostatcrawler import EurostatCrawler
 from datosgobescrawler import datosGobEsCrawler
+from ZenodoCrawler import ZenodoCrawler
 from setup_logger import logger
 from sys import exit
 import time
@@ -49,6 +50,7 @@ class OpenDataCrawler():
         dms['WorldBank'] = '/ddhxext/DatasetList'
         dms['EuroStat'] = '/estat-navtree-portlet-prod/BulkDownloadListing?sort=1&dir=metadata'
         dms['datosGobEs'] = '/apidata/catalog/dataset?_sort=title&_pageSize=1'
+        dms['Zenodo'] = '/api/records/'
 
         for k, v in dms.items():
             try:
@@ -78,12 +80,14 @@ class OpenDataCrawler():
             self.dms_instance = WorldBankCrawler(self.domain, self.data_types)
         if self.dms == 'EuroStat':
             self.dms_instance = EurostatCrawler(self.domain)
-
         if self.dms == 'datosGobEs':
             self.dms_instance = datosGobEsCrawler(self.domain, self.data_types)
+        if self.dms == 'Zenodo':
+            self.dms_instance = ZenodoCrawler(self.domain)
         if self.dms is None:
             print("The domain " + self.domain + " is not supported yet")
             logger.info("DMS not detected in %s", self.domain)
+        
 
     def save_dataset(self, url, ext):
         """ Save a dataset from a given url and extension"""
