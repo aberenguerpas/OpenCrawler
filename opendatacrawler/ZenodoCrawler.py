@@ -19,7 +19,6 @@ class ZenodoCrawler(interface):
 
     def get_package_list(self):
         """Get all the packages ids"""
-        
         total_ids = []
         
         ids_csv = utils.get_requests_ids('csv', self.token)
