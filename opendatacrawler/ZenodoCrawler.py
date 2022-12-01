@@ -25,6 +25,7 @@ class ZenodoCrawler(interface):
         ids_zip = utils.get_requests_ids('zip', self.token)
         ids_xlsx = utils.get_requests_ids('xlsx', self.token)
         
+        # Add ids        
         cont_csv = 0
         for x in ids_csv:
             total_ids.append(x)
