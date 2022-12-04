@@ -4,6 +4,7 @@ from url_normalize import url_normalize
 import os
 import pathlib
 import time
+import requests
 
 timer = 0
 # Funtions to control a timer for ZenodoCrawler calls to the API
@@ -150,3 +151,22 @@ def remove_resume_id(path):
 
     if os.path.exists(path):
         os.remove(path)
+
+def get_requests_ids(file_type, token):
+    skip = 1
+    ids = []
+    fin = False
+        
+    while not fin:
+        response = requests.get('https://zenodo.org/api/records/?type=dataset&file_type=' + file_type + '&size=200&page='+str(skip)+'&access_token='+str(token))
+        if response.status_code == 200:
+            packages = response.json()['hits']['hits']
+            if len(packages) > 0:
+                skip += 1
+                for p in packages:
+                    ids.append(p['id'])
+            else:
+                fin = True
+        else:
+            fin = True
+    return ids

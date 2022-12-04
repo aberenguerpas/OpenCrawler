@@ -19,22 +19,29 @@ class ZenodoCrawler(interface):
 
     def get_package_list(self):
         """Get all the packages ids"""
-        skip = 1
-        ids = []
-        fin = False
-        while not fin:
-            response = requests.get('https://zenodo.org/api/records/?type=dataset&size=200&page='+str(skip)+'&access_token='+str(self.token))
-            if response.status_code == 200:
-                packages = response.json()['hits']['hits']
-                if len(packages) > 0:
-                    skip += 1
-                    for p in packages:
-                        ids.append(p['id'])
-                else:
-                    fin = True
-            else:
-                fin = True
-        return ids
+        total_ids = []
+        
+        ids_csv = utils.get_requests_ids('csv', self.token)
+        ids_zip = utils.get_requests_ids('zip', self.token)
+        ids_xlsx = utils.get_requests_ids('xlsx', self.token)
+        
+        # Add ids        
+        cont_csv = 0
+        for x in ids_csv:
+            total_ids.append(x)
+            cont_csv = cont_csv + 1
+            
+        cont_zip = 0    
+        for y in ids_zip:
+            total_ids.append(y)
+            cont_zip = cont_zip + 1
+            
+        cont_xlsx = 0    
+        for z in ids_xlsx:
+            total_ids.append(z)
+            cont_xlsx = cont_xlsx + 1
+            
+        return total_ids
 
     def get_package(self, id):
         """Build a dict of package metadata"""

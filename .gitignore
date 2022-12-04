@@ -140,3 +140,6 @@ dmypy.json
 .vscode/
 
 .DS_Store
+data/zenodo.org/
+
+data/resume_zenodo.org.txt
