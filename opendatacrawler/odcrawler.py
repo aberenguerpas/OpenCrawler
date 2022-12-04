@@ -142,7 +142,7 @@ class OpenDataCrawler():
     def save_metadata(self, data):
         """ Save the dict containing the metadata on a json file"""
         try:
-            with open(self.save_path + "/meta_"+data['identifier']+'.json',
+            with open(self.save_path + "/meta_"+str(data['identifier'])+'.json',
                       'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
         except Exception as e:
