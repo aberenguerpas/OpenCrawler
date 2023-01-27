@@ -1,6 +1,7 @@
 import requests
 import urllib3
 import utils
+import json
 from setup_logger import logger
 from opendatacrawlerInterface import OpenDataCrawlerInterface as interface
 
@@ -9,9 +10,10 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class CkanCrawler(interface):
 
-    def __init__(self, domain, data_types):
+    def __init__(self, domain, data_types, path):
         self.domain = domain
         self.data_types = data_types
+        self.path = path
 
     def get_package_list(self):
 
@@ -91,6 +93,16 @@ class CkanCrawler(interface):
                 metadata['modified'] = meta.get('metadata_modified', None)
                 metadata['license'] = meta.get('license_title', None)
                 metadata['source'] = self.domain
+                
+                # Saving all meta in a json file
+                try:
+                    with open(self.path + "/all_" + str(metadata['identifier']) + '.json',
+                            'w', encoding='utf-8') as f:
+                        json.dump(meta, f, ensure_ascii=False, indent=4)
+                except Exception as e:
+                    logger.error('Error saving metadata  %s',
+                                self.path + "/all_" + metadata['identifier'] + '.json')
+                    logger.error(e) 
 
                 return metadata
             else:

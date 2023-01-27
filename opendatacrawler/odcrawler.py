@@ -73,7 +73,7 @@ class OpenDataCrawler():
 
         # Create an instance of the corresponding dms
         if self.dms == 'CKAN':
-            self.dms_instance = CkanCrawler(self.domain, self.data_types)
+            self.dms_instance = CkanCrawler(self.domain, self.data_types, self.save_path)
         if self.dms == 'Socrata':
             self.dms_instance = SocrataCrawler(self.domain, self.data_types)
         if self.dms == 'WorldBank':
@@ -89,7 +89,7 @@ class OpenDataCrawler():
             logger.info("DMS not detected in %s", self.domain)
         
 
-    def save_dataset(self, url, ext):
+    def save_partial_dataset(self, url, ext):
         """ Save a dataset from a given url and extension"""
         try:
             # Web page is not consideret a dataset
@@ -121,6 +121,59 @@ class OpenDataCrawler():
                                     logger.warning('Timeout! Partially downloaded file %s', url)
                                     break
 
+                                if chunk:
+                                    outfile.write(chunk)
+                                    outfile.flush()
+
+                        if not partial:
+                            logger.info("Dataset saved from %s", url)
+
+                        return path
+                    else:
+                        logger.warning('Problem obtaining the resource %s', url)
+
+                        return None
+
+        except Exception as e:
+            logger.error('Error saving dataset from %s', url)
+            logger.error(e)
+            return None
+
+    def save_dataset(self, url, ext):
+        """ Save a dataset from a given url and extension"""
+        try:
+            # Web page is not consideret a dataset
+            if url[-4] != 'html':
+
+                logger.info("Saving... %s ", url)
+
+                with requests.get(url, stream=True, timeout=60, verify=False) as r:
+                    if r.status_code == 200:
+                        # Try to obtain the file name inside the link, else
+                        # use the last part of the url with the dataset extension
+                        if "Content-Disposition" in r.headers.keys():
+                            fname = re.findall("filename=(.+)", r.headers["Content-Disposition"])[0]
+                        else:
+                            fname = url.split("/")[-1]
+                            if len(fname.split(".")) == 1:
+                                fname += "."+ext
+
+                        path = self.save_path+"/"+fname.replace('"', '')
+
+                        # Write the content on a file
+                        with open(path, 'wb') as outfile:
+                            t = time.time()
+                            partial = False
+                            cont = 0
+                            for chunk in r.iter_content(chunk_size=1024):
+
+                                if self.max_sec and ((time.time() - t) > self.max_sec):
+                                    partial = True
+                                    logger.warning('Timeout! Partially downloaded file %s', url)
+                                    break
+                                elif not self.max_sec and ext == 'csv':
+                                    if r.content[cont] == '\n':
+                                        print('Hola')
                                 if chunk:
                                     outfile.write(chunk)
                                     outfile.flush()
