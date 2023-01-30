@@ -2,6 +2,7 @@ import requests
 import urllib3
 import json
 import utils
+import mmap
 import re
 import os
 from SocrataCrawler import SocrataCrawler
@@ -89,7 +90,7 @@ class OpenDataCrawler():
             logger.info("DMS not detected in %s", self.domain)
         
 
-    def save_partial_dataset(self, url, ext):
+    def save_dataset(self, url, ext):
         """ Save a dataset from a given url and extension"""
         try:
             # Web page is not consideret a dataset
@@ -139,7 +140,7 @@ class OpenDataCrawler():
             logger.error(e)
             return None
 
-    def save_dataset(self, url, ext):
+    def save_partial_dataset(self, url, ext):
         """ Save a dataset from a given url and extension"""
         try:
             # Web page is not consideret a dataset
@@ -164,19 +165,37 @@ class OpenDataCrawler():
                         with open(path, 'wb') as outfile:
                             t = time.time()
                             partial = False
-                            cont = 0
                             for chunk in r.iter_content(chunk_size=1024):
 
                                 if self.max_sec and ((time.time() - t) > self.max_sec):
                                     partial = True
                                     logger.warning('Timeout! Partially downloaded file %s', url)
                                     break
-                                elif not self.max_sec and ext == 'csv':
-                                    if r.content[cont] == '\n':
-                                        print('Hola')
+                                
                                 if chunk:
                                     outfile.write(chunk)
                                     outfile.flush()
+                                    if ext == 'csv':
+                                        with open(path, 'rb') as myfile:
+                                            total_lines = sum(1 for line in myfile)
+                                            if total_lines > 100:
+                                                f = open(path, "rb")
+                                                lineas = f.readlines()
+                                                f.close()
+                                                
+                                                f = open(path, "wb")
+                                                pos = total_lines - 1
+                                                linea=lineas[pos]
+                                                lineas.remove(linea)
+                                                cont = 0
+                                                for linea in lineas:
+                                                    if cont < 100:
+                                                        f.write(linea)
+                                                        cont += 1
+                                                    else:
+                                                        break
+                                                f.close()
+                                                break
 
                         if not partial:
                             logger.info("Dataset saved from %s", url)

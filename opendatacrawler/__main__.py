@@ -31,6 +31,10 @@ def main():
 
     parser.add_argument('-s', '--max_seconds', type=int, required=False,
                         help="Max seconds employed downloading a file (Ex. -s 60)")
+    
+    parser.add_argument('-pd', '--partial_dataset', required=False,
+                        action=argparse.BooleanOptionalAction,
+                        help='Save partial dataset (default: not save)')
 
     args = vars(parser.parse_args())
 
@@ -41,6 +45,7 @@ def main():
     categories = utils.lower_list(args['categories'])
     d_path = args['path']
     max_sec = args['max_seconds']
+    partial = args['partial_dataset']
 
     # Show the intro text
 
@@ -92,8 +97,10 @@ def main():
                             if len(package['resources']) > 0 and exist_cat:
                                 for r in package['resources']:
                                     if(r['downloadUrl'] and r['mediaType'] != ""):
-					
-                                        r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
+                                        if partial:
+                                            r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
+                                        else: 
+                                            r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
                                         if r['path']:
                                             resources_save = True
                                         save_id = id
