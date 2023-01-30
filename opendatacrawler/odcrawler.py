@@ -165,6 +165,7 @@ class OpenDataCrawler():
                         with open(path, 'wb') as outfile:
                             t = time.time()
                             partial = False
+                            adjust = False
                             for chunk in r.iter_content(chunk_size=1024):
 
                                 if self.max_sec and ((time.time() - t) > self.max_sec):
@@ -179,23 +180,29 @@ class OpenDataCrawler():
                                         with open(path, 'rb') as myfile:
                                             total_lines = sum(1 for line in myfile)
                                             if total_lines > 100:
-                                                f = open(path, "rb")
-                                                lineas = f.readlines()
-                                                f.close()
-                                                
-                                                f = open(path, "wb")
-                                                pos = total_lines - 1
-                                                linea=lineas[pos]
-                                                lineas.remove(linea)
-                                                cont = 0
-                                                for linea in lineas:
-                                                    if cont < 100:
-                                                        f.write(linea)
-                                                        cont += 1
-                                                    else:
-                                                        break
-                                                f.close()
+                                                partial = True
+                                                logger.warning('Partially downloaded file %s', url)
+                                                adjust = True
+                                                myfile.close()
                                                 break
+                        
+                            if adjust:        
+                                f = open(path, "rb")
+                                lines = f.readlines()
+                                f.close()
+                                                    
+                                f = open(path, "wb")
+                                pos = total_lines - 1
+                                line=lines[pos]
+                                lines.remove(line)
+                                cont = 0
+                                for line in lines:
+                                    if cont < 100:
+                                        f.write(line)
+                                        cont += 1
+                                    else:
+                                        break
+                                f.close()
 
                         if not partial:
                             logger.info("Dataset saved from %s", url)
