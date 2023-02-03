@@ -2,6 +2,7 @@ import requests
 import urllib3
 import json
 import utils
+import mmap
 import re
 import os
 from SocrataCrawler import SocrataCrawler
@@ -73,7 +74,7 @@ class OpenDataCrawler():
 
         # Create an instance of the corresponding dms
         if self.dms == 'CKAN':
-            self.dms_instance = CkanCrawler(self.domain, self.data_types)
+            self.dms_instance = CkanCrawler(self.domain, self.data_types, self.save_path)
         if self.dms == 'Socrata':
             self.dms_instance = SocrataCrawler(self.domain, self.data_types)
         if self.dms == 'WorldBank':
@@ -127,6 +128,67 @@ class OpenDataCrawler():
 
                         if not partial:
                             logger.info("Dataset saved from %s", url)
+
+                        return path
+                    else:
+                        logger.warning('Problem obtaining the resource %s', url)
+
+                        return None
+
+        except Exception as e:
+            logger.error('Error saving dataset from %s', url)
+            logger.error(e)
+            return None
+
+    def save_partial_dataset(self, url, ext):
+        """ Save a dataset from a given url and extension"""
+        try:
+            # Web page is not consideret a dataset
+            if url[-4] != 'html':
+
+                logger.info("Saving... %s ", url)
+
+                with requests.get(url, stream=True, timeout=20, verify=False) as r:
+                    if r.status_code == 200:
+                        # Try to obtain the file name inside the link, else
+                        # use the last part of the url with the dataset extension
+                        if "Content-Disposition" in r.headers.keys():
+                            fname = re.findall("filename=(.+)", r.headers["Content-Disposition"])[0]
+                        else:
+                            fname = url.split("/")[-1]
+                            if len(fname.split(".")) == 1:
+                                fname += "."+ext
+
+                        path = self.save_path+"/"+fname.replace('"', '')
+
+                        # Write the content on a file
+                        loader = requests.get(url, stream=True)
+                        lines = []
+                        lines_csv = []
+                        max_lines = 10 # Max lines to download
+                        if self.domain == 'https://datos.gob.es/es':
+                            elements = url.split("/")
+                            pos = len(elements)
+                            ext = elements[pos - 1].split(".")[1]
+                            
+                        for i, line in enumerate(loader.iter_lines()):
+                            if line:
+                                if ext == 'csv' and i < max_lines:
+                                    decoded_line = line.decode('utf-8')
+                                    lines_csv.append(decoded_line+"\n")
+                                elif ext == 'csv' and i >= max_lines:
+                                    break
+                                elif ext != 'csv':
+                                    decoded_line = line.decode('utf-8')
+                                    lines.append(decoded_line+"\n")
+
+                        logger.info("Dataset partially saved from %s", url)
+                        f = open(path, "w")
+                        if ext == 'csv':
+                            f.writelines(lines_csv)
+                        else:
+                            f.writelines(lines)
+                        f.close()
 
                         return path
                     else:
