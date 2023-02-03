@@ -143,3 +143,5 @@ dmypy.json
 data/zenodo.org/
 
 data/resume_zenodo.org.txt
+
+data/*

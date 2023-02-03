@@ -11,22 +11,22 @@ class datosGobEsCrawler(interface):
 
     def get_package_list(self):
         """Get all the packages ids"""
-        skip = 0
-        ids = []
-        fin = False
 
-        while not fin:
-            response = requests.get('https://datos.gob.es/apidata/catalog/dataset?_sort=title&_pageSize=200&_page='+str(skip))
-            if response.status_code == 200:
-                packages = response.json()['result']['items']
-                if len(packages) > 0:
-                    skip += 1
-                    for p in packages:
-                        ids.append(p['_about'].split("/")[-1])
-                else:
-                    fin = True
-            else:
-                fin = True
+        ids = []
+
+        url = 'http://datos.gob.es/virtuoso/sparql'
+
+        params = {
+            'query': 'select distinct ?dataset where{?dataset a <http://www.w3.org/ns/dcat#Dataset>}'
+        }
+        header = {
+            'Accept': 'application/sparql-results+json'
+        }
+        res = requests.get(url, params=params, headers=header)
+
+        for dataset in res.json()['results']['bindings']:
+            ids.append(dataset['dataset']['value'].split("/")[-1])
+
 
         return ids
 
