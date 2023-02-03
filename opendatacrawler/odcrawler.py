@@ -148,7 +148,7 @@ class OpenDataCrawler():
 
                 logger.info("Saving... %s ", url)
 
-                with requests.get(url, stream=True, timeout=60, verify=False) as r:
+                with requests.get(url, stream=True, timeout=20, verify=False) as r:
                     if r.status_code == 200:
                         # Try to obtain the file name inside the link, else
                         # use the last part of the url with the dataset extension
@@ -162,50 +162,33 @@ class OpenDataCrawler():
                         path = self.save_path+"/"+fname.replace('"', '')
 
                         # Write the content on a file
-                        with open(path, 'wb') as outfile:
-                            t = time.time()
-                            partial = False
-                            adjust = False
-                            for chunk in r.iter_content(chunk_size=1024):
-
-                                if self.max_sec and ((time.time() - t) > self.max_sec):
-                                    partial = True
-                                    logger.warning('Timeout! Partially downloaded file %s', url)
+                        loader = requests.get(url, stream=True)
+                        lines = []
+                        lines_csv = []
+                        max_lines = 10 # Max lines to download
+                        if self.domain == 'https://datos.gob.es/es':
+                            elements = url.split("/")
+                            pos = len(elements)
+                            ext = elements[pos - 1].split(".")[1]
+                            
+                        for i, line in enumerate(loader.iter_lines()):
+                            if line:
+                                if ext == 'csv' and i < max_lines:
+                                    decoded_line = line.decode('utf-8')
+                                    lines_csv.append(decoded_line+"\n")
+                                elif ext == 'csv' and i >= max_lines:
                                     break
-                                
-                                if chunk:
-                                    outfile.write(chunk)
-                                    outfile.flush()
-                                    if ext == 'csv':
-                                        with open(path, 'rb') as myfile:
-                                            total_lines = sum(1 for line in myfile)
-                                            if total_lines > 100:
-                                                partial = True
-                                                logger.warning('Partially downloaded file %s', url)
-                                                adjust = True
-                                                myfile.close()
-                                                break
-                        
-                            if adjust:        
-                                f = open(path, "rb")
-                                lines = f.readlines()
-                                f.close()
-                                                    
-                                f = open(path, "wb")
-                                pos = total_lines - 1
-                                line=lines[pos]
-                                lines.remove(line)
-                                cont = 0
-                                for line in lines:
-                                    if cont < 100:
-                                        f.write(line)
-                                        cont += 1
-                                    else:
-                                        break
-                                f.close()
+                                elif ext != 'csv':
+                                    decoded_line = line.decode('utf-8')
+                                    lines.append(decoded_line+"\n")
 
-                        if not partial:
-                            logger.info("Dataset saved from %s", url)
+                        logger.info("Dataset partially saved from %s", url)
+                        f = open(path, "w")
+                        if ext == 'csv':
+                            f.writelines(lines_csv)
+                        else:
+                            f.writelines(lines)
+                        f.close()
 
                         return path
                     else:
