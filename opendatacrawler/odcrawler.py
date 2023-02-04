@@ -14,6 +14,8 @@ from ZenodoCrawler import ZenodoCrawler
 from setup_logger import logger
 from sys import exit
 import time
+from urllib.request import urlopen
+
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -97,6 +99,7 @@ class OpenDataCrawler():
             if url[-4] != 'html':
 
                 logger.info("Saving... %s ", url)
+                size = None
 
                 with requests.get(url, stream=True, timeout=60, verify=False) as r:
                     if r.status_code == 200:
@@ -129,16 +132,16 @@ class OpenDataCrawler():
                         if not partial:
                             logger.info("Dataset saved from %s", url)
 
-                        return path
+                        return path, size
                     else:
                         logger.warning('Problem obtaining the resource %s', url)
 
-                        return None
+                        return None, None
 
         except Exception as e:
             logger.error('Error saving dataset from %s', url)
             logger.error(e)
-            return None
+            return None, None
 
     def save_partial_dataset(self, url, ext):
         """ Save a dataset from a given url and extension"""
@@ -147,6 +150,8 @@ class OpenDataCrawler():
             if url[-4] != 'html':
 
                 logger.info("Saving... %s ", url)
+
+                size = None
 
                 with requests.get(url, stream=True, timeout=20, verify=False) as r:
                     if r.status_code == 200:
@@ -189,16 +194,16 @@ class OpenDataCrawler():
                             f.writelines(lines)
                         f.close()
 
-                        return path
+                        return path, size
                     else:
                         logger.warning('Problem obtaining the resource %s', url)
 
-                        return None
+                        return None, None
 
         except Exception as e:
             logger.error('Error saving dataset from %s', url)
             logger.error(e)
-            return None
+            return None, None
 
     def save_metadata(self, data):
         """ Save the dict containing the metadata on a json file"""
