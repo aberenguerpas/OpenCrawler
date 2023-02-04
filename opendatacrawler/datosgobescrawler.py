@@ -58,7 +58,7 @@ class datosGobEsCrawler(interface):
                     metadata['theme'] = meta.get('theme', None).split('/')[-1]
                 else:
                     metadata['theme'] = [m.split('/')[-1] for m in meta['theme']]
-                
+
                 resource_list = []
 
                 if not isinstance(meta['distribution'], list):
@@ -78,6 +78,29 @@ class datosGobEsCrawler(interface):
                 metadata['modified'] = meta.get('modified', None)
                 metadata['license'] = meta.get('license', None)
                 metadata['source'] = self.domain
+
+                metadata['temporal'] = dict()
+                if meta.get('temporal', None) is not None:
+                    if 'startDate' in meta['temporal']:
+                        metadata['temporal']['startDate'] = meta['temporal']['startDate']
+                    else:
+                        metadata['temporal']['startDate'] = None
+
+                    if 'endDate' in meta['temporal']:
+                        metadata['temporal']['endDate'] = meta['temporal']['endDate']
+                    else:
+                        metadata['temporal']['endtDate'] = None
+                else:
+                    metadata['temporal']['startDate'] = None
+                    metadata['temporal']['endDate'] = None
+
+                if meta.get('spatial', None) is not None:
+                    if type(meta['spatial']) is list:
+                        metadata['geo'] = [place.split("/")[-1:][0] for place in meta['spatial']]
+                    else:
+                        metadata['geo'] = meta['spatial'].split("/")[-1:]
+                else:
+                    metadata['geo'] = None
 
                 return metadata
             else:

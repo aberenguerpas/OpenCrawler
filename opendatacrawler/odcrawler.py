@@ -165,7 +165,7 @@ class OpenDataCrawler():
                         loader = requests.get(url, stream=True)
                         lines = []
                         lines_csv = []
-                        max_lines = 10 # Max lines to download
+                        max_lines = 50 # Max lines to download
                         if 'datos.gob.es' in self.domain:
                             elements = url.split("/")
                             isCsv = "csv" in elements[-1:][0]
