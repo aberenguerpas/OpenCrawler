@@ -99,7 +99,6 @@ class OpenDataCrawler():
             if url[-4] != 'html':
 
                 logger.info("Saving... %s ", url)
-                size = None
 
                 with requests.get(url, stream=True, timeout=60, verify=False) as r:
                     if r.status_code == 200:
@@ -132,16 +131,16 @@ class OpenDataCrawler():
                         if not partial:
                             logger.info("Dataset saved from %s", url)
 
-                        return path, size
+                        return path
                     else:
                         logger.warning('Problem obtaining the resource %s', url)
 
-                        return None, None
+                        return None
 
         except Exception as e:
             logger.error('Error saving dataset from %s', url)
             logger.error(e)
-            return None, None
+            return None
 
     def save_partial_dataset(self, url, ext):
         """ Save a dataset from a given url and extension"""
@@ -151,7 +150,6 @@ class OpenDataCrawler():
 
                 logger.info("Saving... %s ", url)
 
-                size = None
 
                 with requests.get(url, stream=True, timeout=20, verify=False) as r:
                     if r.status_code == 200:
@@ -178,12 +176,12 @@ class OpenDataCrawler():
                         for i, line in enumerate(loader.iter_lines()):
                             if line:
                                 if isCsv and i < max_lines:
-                                    decoded_line = line.decode('utf-8')
+                                    decoded_line = line.decode('latin1')
                                     lines_csv.append(decoded_line+"\n")
                                 elif isCsv and i >= max_lines:
                                     break
                                 elif not isCsv:
-                                    decoded_line = line.decode('utf-8')
+                                    decoded_line = line.decode('latin1')
                                     lines.append(decoded_line+"\n")
 
                         logger.info("Dataset partially saved from %s", url)
@@ -194,16 +192,16 @@ class OpenDataCrawler():
                             f.writelines(lines)
                         f.close()
 
-                        return path, size
+                        return path
                     else:
                         logger.warning('Problem obtaining the resource %s', url)
 
-                        return None, None
+                        return None
 
         except Exception as e:
             logger.error('Error saving dataset from %s', url)
             logger.error(e)
-            return None, None
+            return None
 
     def save_metadata(self, data):
         """ Save the dict containing the metadata on a json file"""

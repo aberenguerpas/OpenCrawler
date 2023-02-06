@@ -33,10 +33,15 @@ class datosGobEsCrawler(interface):
     def add_source(self, meta):
         aux = dict()
 
-        aux['name'] = meta['title'][0]['_value']
+        aux['name'] = meta.get('title', None)
+        if aux['name'] is not None:
+            aux['name'] = meta['title'][0]['_value']
         aux['downloadUrl'] = meta.get('accessURL', None)
+        if aux['downloadUrl'] is None:
+              aux['downloadUrl'] = meta.get('accessURL', None)
         aux['mediaType'] = meta['format']['value']
-
+        aux['size'] = meta.get('byteSize', None)
+        
         return aux
 
     def get_package(self, id):
@@ -48,11 +53,26 @@ class datosGobEsCrawler(interface):
             if response.status_code == 200:
                 meta = response.json()['result']['items'][0]
 
+                print(meta)
+
                 metadata = dict()
 
                 metadata['identifier'] = id
+                metadata['img'] = 'https://avatars.githubusercontent.com/u/102170496?s=200&v=4'
                 metadata['title'] = meta['title'][0]['_value']
+
+                if len(meta['title'])>1:
+                    for t in meta['title']:
+                        if t['_lang']=='es':
+                            metadata['title'] = t['_value']
+
                 metadata['description'] = meta['description'][0]['_value']
+                if len(meta['description'])>1:
+                    for t in meta['description']:
+                        if t['_lang']=='es':
+                            metadata['description'] = t['_value']
+
+               
 
                 if not isinstance(meta['theme'], list):
                     metadata['theme'] = meta.get('theme', None).split('/')[-1]
@@ -76,6 +96,7 @@ class datosGobEsCrawler(interface):
 
                 metadata['resources'] = resource_list
                 metadata['modified'] = meta.get('modified', None)
+                metadata['issued'] = meta.get('issued', None)
                 metadata['license'] = meta.get('license', None)
                 metadata['source'] = self.domain
 
@@ -107,6 +128,7 @@ class datosGobEsCrawler(interface):
                 return None
 
         except Exception as e:
+            print(meta)
             print(traceback.format_exc())
             logger.error(e)
             return None

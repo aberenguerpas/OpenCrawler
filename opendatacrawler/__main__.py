@@ -98,9 +98,9 @@ def main():
                                 for r in package['resources']:
                                     if(r['downloadUrl'] and r['mediaType'] != ""):
                                         if partial:
-                                            r['path'], r['size'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
+                                            r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
                                         else: 
-                                            r['path'], r['size'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
+                                            r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
                                         if r['path']:
                                             resources_save = True
                                             break
