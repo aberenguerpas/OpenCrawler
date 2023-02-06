@@ -53,8 +53,6 @@ class datosGobEsCrawler(interface):
             if response.status_code == 200:
                 meta = response.json()['result']['items'][0]
 
-                print(meta)
-
                 metadata = dict()
 
                 metadata['identifier'] = id
