@@ -126,7 +126,6 @@ class datosGobEsCrawler(interface):
                 return None
 
         except Exception as e:
-            print(meta)
             print(traceback.format_exc())
             logger.error(e)
             return None
