@@ -176,12 +176,12 @@ class OpenDataCrawler():
                         for i, line in enumerate(loader.iter_lines()):
                             if line:
                                 if isCsv and i < max_lines:
-                                    decoded_line = line.decode('latin1')
+                                    decoded_line = line.decode('utf-8')
                                     lines_csv.append(decoded_line+"\n")
                                 elif isCsv and i >= max_lines:
                                     break
                                 elif not isCsv:
-                                    decoded_line = line.decode('latin1')
+                                    decoded_line = line.decode('utf-8')
                                     lines.append(decoded_line+"\n")
 
                         logger.info("Dataset partially saved from %s", url)
