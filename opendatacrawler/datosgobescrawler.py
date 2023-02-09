@@ -56,7 +56,7 @@ class datosGobEsCrawler(interface):
                 metadata = dict()
 
                 metadata['identifier'] = id
-                metadata['img'] = 'https://avatars.githubusercontent.com/u/102170496?s=200&v=4'
+                metadata['img'] = 'https://www.google.com/url?sa=i&url=https%3A%2F%2Ftwitter.com%2Fdatosgob&psig=AOvVaw0S3XMbqIR169Ky85_jiAZ9&ust=1676033201784000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCMD7t6-8iP0CFQAAAAAdAAAAABAE'
                 metadata['title'] = meta['title'][0]['_value']
 
                 if len(meta['title'])>1:
