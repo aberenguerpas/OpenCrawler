@@ -165,11 +165,10 @@ class OpenDataCrawler():
                         loader = requests.get(url, stream=True)
                         lines = []
                         lines_csv = []
-                        max_lines = 10 # Max lines to download
-                        if self.domain == 'https://datos.gob.es/es':
-                            elements = url.split("/")
-                            pos = len(elements)
-                            ext = elements[pos - 1].split(".")[1]
+                        max_lines = 50 # Max lines to download
+                        if 'datos.gob.es' in self.domain:
+                            elements = url.split('/')
+                            ext = 'csv' in elements[-1:][0]
                             
                         for i, line in enumerate(loader.iter_lines()):
                             if line:
@@ -182,8 +181,8 @@ class OpenDataCrawler():
                                     decoded_line = line.decode('utf-8')
                                     lines.append(decoded_line+"\n")
 
-                        logger.info("Dataset partially saved from %s", url)
-                        f = open(path, "w")
+                        logger.info('Dataset partially saved from %s', url)
+                        f = open(path, 'w')
                         if ext == 'csv':
                             f.writelines(lines_csv)
                         else:
