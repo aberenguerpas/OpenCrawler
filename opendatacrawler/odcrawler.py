@@ -14,6 +14,8 @@ from ZenodoCrawler import ZenodoCrawler
 from setup_logger import logger
 from sys import exit
 import time
+from urllib.request import urlopen
+
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -148,6 +150,7 @@ class OpenDataCrawler():
 
                 logger.info("Saving... %s ", url)
 
+
                 with requests.get(url, stream=True, timeout=20, verify=False) as r:
                     if r.status_code == 200:
                         # Try to obtain the file name inside the link, else
@@ -172,18 +175,19 @@ class OpenDataCrawler():
                             
                         for i, line in enumerate(loader.iter_lines()):
                             if line:
-                                if ext == 'csv' and i < max_lines:
+                                if isCsv and i < max_lines:
                                     decoded_line = line.decode('utf-8')
                                     lines_csv.append(decoded_line+"\n")
-                                elif ext == 'csv' and i >= max_lines:
+                                elif isCsv and i >= max_lines:
                                     break
-                                elif ext != 'csv':
+                                elif not isCsv:
                                     decoded_line = line.decode('utf-8')
                                     lines.append(decoded_line+"\n")
 
                         logger.info('Dataset partially saved from %s', url)
                         f = open(path, 'w')
                         if ext == 'csv':
+
                             f.writelines(lines_csv)
                         else:
                             f.writelines(lines)

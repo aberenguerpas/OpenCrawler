@@ -103,11 +103,11 @@ def main():
                                             r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
                                         if r['path']:
                                             resources_save = True
+                                            break
                                         save_id = id
 
                                 if save_meta and resources_save:
                                     crawler.save_metadata(package)
-
                 else:
                     print("Error ocurred while obtain packages")
 
