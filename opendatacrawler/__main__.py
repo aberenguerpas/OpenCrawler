@@ -98,9 +98,17 @@ def main():
                                 for r in package['resources']:
                                     if(r['downloadUrl'] and r['mediaType'] != ""):
                                         if partial:
-                                            r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
-                                        else: 
-                                            r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
+                                            if url == 'https://datosabiertos.dipcas.es':
+                                                for i in range(len(r['downloadUrl'])):
+                                                    r['path'] = crawler.save_partial_dataset(r['downloadUrl'][i], r['mediaType'][i])
+                                            else:
+                                                r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
+                                        else:
+                                            if url == 'https://datosabiertos.dipcas.es':
+                                                for i in range(len(r['downloadUrl'])):
+                                                    r['path'] = crawler.save_dataset(r['downloadUrl'][i], r['mediaType'][i])
+                                            else:
+                                                r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
                                         if r['path']:
                                             resources_save = True
                                             break
