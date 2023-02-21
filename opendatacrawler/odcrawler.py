@@ -11,6 +11,7 @@ from worldbankcrawler import WorldBankCrawler
 from eurostatcrawler import EurostatCrawler
 from datosgobescrawler import datosGobEsCrawler
 from ZenodoCrawler import ZenodoCrawler
+from OpenDataSoftCrawler import OpenDataSoftCrawler
 from setup_logger import logger
 from sys import exit
 import time
@@ -54,6 +55,7 @@ class OpenDataCrawler():
         dms['EuroStat'] = '/estat-navtree-portlet-prod/BulkDownloadListing?sort=1&dir=metadata'
         dms['datosGobEs'] = '/apidata/catalog/dataset?_sort=title&_pageSize=1'
         dms['Zenodo'] = '/api/records/'
+        dms['OpenDataSoft'] = '/api/v2/catalog'
 
         for k, v in dms.items():
             try:
@@ -87,6 +89,8 @@ class OpenDataCrawler():
             self.dms_instance = datosGobEsCrawler(self.domain, self.data_types)
         if self.dms == 'Zenodo':
             self.dms_instance = ZenodoCrawler(self.domain)
+        if self.dms == 'OpenDataSoft':
+            self.dms_instance = OpenDataSoftCrawler(self.domain)
         if self.dms is None:
             print("The domain " + self.domain + " is not supported yet")
             logger.info("DMS not detected in %s", self.domain)
@@ -175,12 +179,12 @@ class OpenDataCrawler():
                             
                         for i, line in enumerate(loader.iter_lines()):
                             if line:
-                                if isCsv and i < max_lines:
+                                if ext and i < max_lines:
                                     decoded_line = line.decode('utf-8')
                                     lines_csv.append(decoded_line+"\n")
-                                elif isCsv and i >= max_lines:
+                                elif ext and i >= max_lines:
                                     break
-                                elif not isCsv:
+                                elif not ext:
                                     decoded_line = line.decode('utf-8')
                                     lines.append(decoded_line+"\n")
 
