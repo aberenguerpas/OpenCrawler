@@ -99,14 +99,17 @@ def main():
                                     if(r['downloadUrl'] and r['mediaType'] != ""):
                                         if partial:
                                             if url == 'https://datosabiertos.dipcas.es':
-                                                for i in range(len(r['downloadUrl'])):
-                                                    r['path'] = crawler.save_partial_dataset(r['downloadUrl'][i], r['mediaType'][i])
+                                                if 'csv' in r['mediaType']:
+                                                    r['path'] = crawler.save_partial_dataset(r['downloadUrl'][r['mediaType'].index('csv')], 'csv')
                                             else:
                                                 r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
                                         else:
                                             if url == 'https://datosabiertos.dipcas.es':
-                                                for i in range(len(r['downloadUrl'])):
-                                                    r['path'] = crawler.save_dataset(r['downloadUrl'][i], r['mediaType'][i])
+                                                if d_path and d_path in r['mediaType']:
+                                                    r['path'] = crawler.save_dataset(r['downloadUrl'][r['mediaType'].index(d_path)], d_path)
+                                                elif not d_path:
+                                                    for i in range(len(r['mediaType'])):
+                                                        r['path'] = crawler.save_dataset(r['downloadUrl'][i], r['mediaType'][i])
                                             else:
                                                 r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
                                         if r['path']:

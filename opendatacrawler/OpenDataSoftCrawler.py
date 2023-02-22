@@ -72,26 +72,6 @@ class OpenDataSoftCrawler(interface):
                     metadata['modified'] = meta.get('modified', None)
                     metadata['license'] = meta.get('license', None)
                     metadata['source'] = self.domain
-                # Saving all meta in a json file
-                # try:
-                #     path = 'C:\\Users\\Usuario\\Desktop\\Crawler2.0\\OpenDataCrawler\\opendatacrawler\\prueba'
-                #     with open(path + "/all_" + str(metadata['identifier']) + '.json',
-                #             'w', encoding='utf-8') as f:
-                #         json.dump(meta_json, f, ensure_ascii=False, indent=4)
-                # except Exception as e:
-                #     logger.error('Error saving metadata  %s',
-                #                 path + "/all_" + metadata['identifier'] + '.json')
-                #     logger.error(e)
-                # Saving metadata in a json file
-                # try:
-                #     path = 'C:\\Users\\Usuario\\Desktop\\Crawler2.0\\OpenDataCrawler\\opendatacrawler\\prueba'
-                #     with open(path + "/metadata_" + str(metadata['identifier']) + '.json',
-                #             'w', encoding='utf-8') as f:
-                #         json.dump(metadata, f, ensure_ascii=False, indent=4)
-                # except Exception as e:
-                #     logger.error('Error saving metadata  %s',
-                #                 path + "/metadata_" + metadata['identifier'] + '.json')
-                #     logger.error(e)
                 return metadata
             else:
                 return None
