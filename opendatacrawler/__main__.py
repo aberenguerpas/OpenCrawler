@@ -98,13 +98,13 @@ def main():
                                 for r in package['resources']:
                                     if(r['downloadUrl'] and r['mediaType'] != ""):
                                         if partial:
-                                            if url == 'https://datosabiertos.dipcas.es':
+                                            if crawler.dms == 'OpenDataSoft':
                                                 if 'csv' in r['mediaType']:
                                                     r['path'] = crawler.save_partial_dataset(r['downloadUrl'][r['mediaType'].index('csv')], 'csv')
                                             else:
                                                 r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
                                         else:
-                                            if url == 'https://datosabiertos.dipcas.es':
+                                            if crawler.dms == 'OpenDataSoft':
                                                 if d_path and d_path in r['mediaType']:
                                                     r['path'] = crawler.save_dataset(r['downloadUrl'][r['mediaType'].index(d_path)], d_path)
                                                 elif not d_path:
