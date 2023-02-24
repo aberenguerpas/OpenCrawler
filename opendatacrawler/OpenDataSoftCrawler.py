@@ -1,6 +1,4 @@
 import requests
-import utils
-import json
 import traceback
 from setup_logger import logger
 from opendatacrawlerInterface import OpenDataCrawlerInterface as interface
@@ -15,7 +13,7 @@ class OpenDataSoftCrawler(interface):
         """Get all the packages ids"""
         try:
             total_ids = []
-            response = requests.get(self.domain + '/api/v2/catalog/datasets?limit=100&lang=es&timezone=UTC')
+            response = requests.get(self.domain + '/api/v2/catalog/datasets?lang=es&timezone=UTC&limit=-1')
             if response.status_code == 200:
                 data = response.json()
                 datasets = data.get('datasets', None)

@@ -112,6 +112,10 @@ python opendatacrawler -d https://data.smartdublin.ie/
 ```
 python opendatacrawler -d https://data.smartdublin.ie/ -m
 ```
+#### Dowload partial dataset (first 50 lines for csv files):
+```
+python opendatacrawler -d https://data.smartdublin.ie/ -pd
+```
 #### Dowload specific fromat data. For example xls and csv:
 ```
 python opendatacrawler -d https://data.smartdublin.ie/ -t xls csv
@@ -138,6 +142,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [x] https://ec.europa.eu/eurostat (LIMITED ⚠️)*
 - [x] https://datacatalogapi.worldbank.org/ (LIMITED ⚠️)*
 - [x] https://datos.gob.es
+- [x] OpenDataSoft
 
 \* Works with restrictions or download limitations
 
