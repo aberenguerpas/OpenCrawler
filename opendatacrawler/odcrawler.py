@@ -2,7 +2,6 @@ import requests
 import urllib3
 import json
 import utils
-import mmap
 import re
 import os
 from SocrataCrawler import SocrataCrawler
