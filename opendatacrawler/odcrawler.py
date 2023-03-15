@@ -11,6 +11,7 @@ from eurostatcrawler import EurostatCrawler
 from datosgobescrawler import datosGobEsCrawler
 from ZenodoCrawler import ZenodoCrawler
 from OpenDataSoftCrawler import OpenDataSoftCrawler
+from INECrawler import INECrawler
 from setup_logger import logger
 from sys import exit
 import time
@@ -55,6 +56,7 @@ class OpenDataCrawler():
         dms['datosGobEs'] = '/apidata/catalog/dataset?_sort=title&_pageSize=1'
         dms['Zenodo'] = '/api/records/'
         dms['OpenDataSoft'] = '/api/v2/catalog'
+        dms['INE'] = '/wstempus/js/ES/OPERACIONES_DISPONIBLES'
 
         for k, v in dms.items():
             try:
@@ -90,6 +92,8 @@ class OpenDataCrawler():
             self.dms_instance = ZenodoCrawler(self.domain)
         if self.dms == 'OpenDataSoft':
             self.dms_instance = OpenDataSoftCrawler(self.domain)
+        if self.dms == 'INE':
+            self.dms_instance = INECrawler(self.domain, self.save_path)
         if self.dms is None:
             print("The domain " + self.domain + " is not supported yet")
             logger.info("DMS not detected in %s", self.domain)
