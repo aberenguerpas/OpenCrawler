@@ -95,40 +95,64 @@ def main():
                         package = crawler.get_package(id)
 
                         if package:
+                            if len(package) > 1:
+                                for elem in package:
+                                    if args['categories'] and elem['theme']:
+                                        exist_cat = any(cat in elem['theme'] for cat in categories)
+                                    else:
+                                        exist_cat = True
 
-                            if args['categories'] and package['theme']:
-                                exist_cat = any(cat in package['theme'] for cat in categories)
-                            else:
-                                exist_cat = True
-
-                            resources_save = False
-                            if len(package['resources']) > 0 and exist_cat:
-                                for r in package['resources']:
-                                    if(r['downloadUrl'] and r['mediaType'] != ""):
-                                        if partial:
-                                            if crawler.dms == 'OpenDataSoft':
-                                                for elem in range(len(r['mediaType'])):
-                                                    r['path'] = crawler.save_partial_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
-                                            else:
-                                                r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
-                                        else:
-                                            if crawler.dms == 'OpenDataSoft':
-                                                if d_types:
-                                                    for d_type in d_types:
-                                                        if d_type in r['mediaType']:
-                                                            r['path'] = crawler.save_dataset(r['downloadUrl'][r['mediaType'].index(d_type)], d_type)
+                                    resources_save = False
+                                    if len(elem['resources']) > 0 and exist_cat:
+                                        for r in elem['resources']:
+                                            if(r['downloadUrl'] and r['mediaType'] != ""):
+                                                if partial:
+                                                    r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
                                                 else:
-                                                    for elem in range(len(r['mediaType'])):
-                                                        r['path'] = crawler.save_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
-                                            else:
-                                                r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
-                                        if r['path']:
-                                            resources_save = True
-                                            break
-                                        save_id = id
+                                                    r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
+                                                    
+                                                if r['path']:
+                                                    resources_save = True
+                                                    break
+                                                save_id = id
 
-                                if save_meta and resources_save:
-                                    crawler.save_metadata(package)
+                                        if save_meta and resources_save:
+                                            crawler.save_metadata(elem)
+                                            
+                            else:
+                                if args['categories'] and package['theme']:
+                                    exist_cat = any(cat in package['theme'] for cat in categories)
+                                else:
+                                    exist_cat = True
+
+                                resources_save = False
+                                if len(package['resources']) > 0 and exist_cat:
+                                    for r in package['resources']:
+                                        if(r['downloadUrl'] and r['mediaType'] != ""):
+                                            if partial:
+                                                if crawler.dms == 'OpenDataSoft':
+                                                    for elem in range(len(r['mediaType'])):
+                                                        r['path'] = crawler.save_partial_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
+                                                else:
+                                                    r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
+                                            else:
+                                                if crawler.dms == 'OpenDataSoft':
+                                                    if d_types:
+                                                        for d_type in d_types:
+                                                            if d_type in r['mediaType']:
+                                                                r['path'] = crawler.save_dataset(r['downloadUrl'][r['mediaType'].index(d_type)], d_type)
+                                                    else:
+                                                        for elem in range(len(r['mediaType'])):
+                                                            r['path'] = crawler.save_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
+                                                else:
+                                                    r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
+                                            if r['path']:
+                                                resources_save = True
+                                                break
+                                            save_id = id
+
+                                    if save_meta and resources_save:
+                                        crawler.save_metadata(package)
                 else:
                     print("Error ocurred while obtain packages")
 

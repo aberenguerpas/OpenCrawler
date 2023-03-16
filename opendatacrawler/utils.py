@@ -1,10 +1,14 @@
 import configparser
-from w3lib.url import url_query_cleaner
-from url_normalize import url_normalize
 import os
 import pathlib
 import time
+import json
 import requests
+import traceback
+import hashlib
+from w3lib.url import url_query_cleaner
+from url_normalize import url_normalize
+from setup_logger import logger
 
 timer = 0
 # Funtions to control a timer for ZenodoCrawler calls to the API
@@ -143,7 +147,7 @@ def load_resume_id(path):
 
 def save_resume_id(path, id):
     f = open(path, "w")
-    f.write(id)
+    f.write(str(id))
     f.close()
 
 
@@ -170,3 +174,39 @@ def get_requests_ids(file_type, token):
         else:
             fin = True
     return ids
+
+def get_operation_name(id):
+    try:
+        info = ''
+        response = requests.get('https://servicios.ine.es/wstempus/js/ES/OPERACIONES_DISPONIBLES')
+        if response.status_code == 200:
+            operations = response.json()
+            if len(operations) > 0:
+                for p in operations:
+                    if p['Id'] == id:
+                        info = p['Nombre']
+        return info
+        
+    except Exception as e:
+        print(traceback.format_exc())
+        logger.info(e)
+        return None
+    
+def save_all_metadata(id, meta, path): 
+    # Saving all meta in a json file
+    try:
+        with open(path + "/all_" + str(id) + '.json',
+                'w', encoding='utf-8') as f:
+            json.dump(meta, f, ensure_ascii=False, indent=4)
+    except Exception as e:
+        logger.error('Error saving metadata  %s',
+                    path + "/all_" + str(id) + '.json')
+        logger.error(e)
+        
+def get_id_custom(name):
+    if name and name is not None and name != '':
+        id = hashlib.md5()
+        id.update(name.encode())
+        return str(int(id.hexdigest(), 16))[0:12]
+    else:
+        return None
