@@ -192,7 +192,7 @@ class OpenDataCrawler():
                                     lines.append(decoded_line+"\n")
 
                         logger.info('Dataset partially saved from %s', url)
-                        f = open(path, 'w')
+                        f = open(path, 'w', encoding='utf-8')
                         if ext == 'csv':
 
                             f.writelines(lines_csv)
@@ -214,12 +214,12 @@ class OpenDataCrawler():
     def save_metadata(self, data):
         """ Save the dict containing the metadata on a json file"""
         try:
-            with open(self.save_path + "/meta_"+str(data['identifier'])+'.json',
+            with open(self.save_path + "/meta_"+str(data['id_portal'])+'.json',
                       'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
         except Exception as e:
             logger.error('Error saving metadata  %s',
-                         self.save_path + "/meta_"+data['identifier']+'.json')
+                         self.save_path + "/meta_"+data['id_portal']+'.json')
             logger.error(e)
 
     def get_package_list(self):

@@ -1,7 +1,5 @@
 import requests
 import utils
-import json
-import numpy as np
 from setup_logger import logger
 from opendatacrawlerInterface import OpenDataCrawlerInterface as interface
 
@@ -40,27 +38,39 @@ class INECrawler(interface):
                         metadata = dict()
                         
                         table_id = str(x.get('Id', None))
-                        metadata['identifier'] = str(id) + '_' + table_id
+                        
+                        metadata['id_portal'] = str(id) + '_' + table_id
+                        metadata['id_custom'] = utils.get_id_custom(metadata['id_portal'] + 'INE')
                         metadata['title'] = x.get('Nombre', None)
-                        metadata['description'] = operation_name + ': ' + x.get('Nombre', None)
+                        metadata['img_portal'] = None
+                        metadata['description'] = operation_name + ': ' + metadata['title']
+                        metadata['language'] = 'ES' # the url says that the query results are in spanish -> /ES/
                         
                         if id in self.tourism_operations:
-                            metadata['theme'] = 'Turismo'
+                            metadata['theme'] = ['Turismo'] # this field is an array
                         else:
                             metadata['theme'] = None
                         
-                        aux = dict()
-                        aux['name'] = 'Datos tabla: ' + metadata['title']
-                        aux['downloadUrl'] = 'https://www.ine.es/jaxiT3/files/t/es/csv_bdsc/' + table_id + '.csv?nocab=1'
-                        aux['mediaType'] = 'csv'
+                        resources = dict()
+                        resources['name'] = 'Datos tabla: ' + metadata['title']
+                        resources['mediaType'] = 'csv'
+                        resources['size'] = None
+                        resources['downloadUrl'] = 'https://www.ine.es/jaxiT3/files/t/es/csv_bdsc/' + table_id + '.csv?nocab=1'
                         
-                        metadata['resources'] = [aux]
-                        metadata['modified'] = x.get('Ultima_Modificacion')
+                        metadata['resources'] = [resources]
+                        metadata['modified'] = x.get('Ultima_Modificacion', None)
+                        metadata['issued'] = x.get('Anyo_Periodo_ini', None)
                         metadata['license'] = 'INE License'
                         metadata['source'] = self.domain
+                        metadata['source_name'] = 'Instituto Nacional de Estadística'
                         
-                        logger.info('Actual Metadata:')
-                        logger.info(metadata)
+                        coverage = dict()
+                        coverage['start_date'] = metadata['issued']
+                        coverage['end_date'] = x.get('FechaRef_fin', None)
+                        
+                        metadata['temporal_coverage'] = [coverage]
+                        metadata['spatial_coverage'] = None
+                        
                         packages.append(metadata)
                 
                 # Saving all meta in a json file        

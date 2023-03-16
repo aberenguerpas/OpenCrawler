@@ -97,8 +97,6 @@ def main():
                         if package:
                             if len(package) > 1:
                                 for elem in package:
-                                    logger.info(elem)
-
                                     if args['categories'] and elem['theme']:
                                         exist_cat = any(cat in elem['theme'] for cat in categories)
                                     else:

@@ -18,17 +18,27 @@ class OpenDataCrawlerInterface(metaclass=ABCMeta):
             package id and also format the metadata with the following
             structure inside a dict:
 
-            metadata['identifier'] -> Packages identifier
+            metadata['id_portal'] -> Packages identifier
+            metadata['id'] -> Portal identifier
             metadata['title'] -> Packages title
+            matadata['img_portal] -> Image portal (Temporarily as None)
             metadata['description'] -> Packages Description
+            metadata['language'] -> Data language (ES spanish, EN english)
             metadata['theme'] -> Packages category, theme, topic...
-            meta['resources'] -> List of resources
+            metadata['resources'] -> List of resources
                             resource['name'] -> Resource name
-                            resource['downloadUrl'] -> Resource url to download
                             resource['mediaType'] -> Type of resource Ex. csv, pdf..
+                            resource['size'] -> Resource size
+                            resource['downloadUrl'] -> Resource url to download
             metadata['modified'] -> Last modification of the package
+            metadata['issued'] -> Creation date of the package
             metadata['license'] -> Package license
             metadata['source'] -> Package source(domain)
+            metadata['source_name] -> Domain name
+            metadata['temporal_coverage']
+                            coverage['start_date'] -> Starting date of the data
+                            coverage['end_date'] -> Finishing date of the data
+            metadata['spatial_coverage'] -> Country, city, town, ...
 
             return metadata: dict
         """

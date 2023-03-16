@@ -5,6 +5,7 @@ import time
 import json
 import requests
 import traceback
+import hashlib
 from w3lib.url import url_query_cleaner
 from url_normalize import url_normalize
 from setup_logger import logger
@@ -200,4 +201,12 @@ def save_all_metadata(id, meta, path):
     except Exception as e:
         logger.error('Error saving metadata  %s',
                     path + "/all_" + str(id) + '.json')
-        logger.error(e) 
+        logger.error(e)
+        
+def get_id_custom(name):
+    if name and name is not None and name != '':
+        id = hashlib.md5()
+        id.update(name.encode())
+        return str(int(id.hexdigest(), 16))[0:12]
+    else:
+        return None
