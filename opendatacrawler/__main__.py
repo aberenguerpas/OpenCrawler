@@ -39,6 +39,10 @@ def main():
     parser.add_argument('-id', '--id_dataset', nargs='+', required=False,
                         help="Save the dataset with that id"
                         "(Ex. -id edu-alu-fpa-2021) (default: all)")
+    
+    parser.add_argument('-nd', '--no_dataset', required=False,
+                        action=argparse.BooleanOptionalAction,
+                        help="No save the dataset (default: save)")
 
     args = vars(parser.parse_args())
 
@@ -51,6 +55,7 @@ def main():
     max_sec = args['max_seconds']
     partial = args['partial_dataset']
     id = args['id_dataset']
+    avoid_data = args['no_dataset']
 
     # Show the intro text
 
@@ -101,10 +106,10 @@ def main():
                             else:
                                 exist_cat = True
 
-                            resources_save = False
+                            #resources_save = False
                             if len(package['resources']) > 0 and exist_cat:
                                 for r in package['resources']:
-                                    if(r['downloadUrl'] and r['mediaType'] != ""):
+                                    if(not avoid_data and r['downloadUrl'] and r['mediaType'] != ""):
                                         if partial:
                                             if crawler.dms == 'OpenDataSoft':
                                                 for elem in range(len(r['mediaType'])):
@@ -123,11 +128,10 @@ def main():
                                             else:
                                                 r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
                                         if r['path']:
-                                            resources_save = True
                                             break
                                         save_id = id
 
-                                if save_meta and resources_save:
+                                if save_meta:
                                     crawler.save_metadata(package)
                 else:
                     print("Error ocurred while obtain packages")
@@ -136,8 +140,7 @@ def main():
             print("Incorrect domain form.\nMust have the form "
                 "https://domain.example or http://domain.example")
 
-    except Exception as e:
-
+    except Exception:
         print(traceback.format_exc())
         print('Keyboard interrumption!')
     finally:

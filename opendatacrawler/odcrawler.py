@@ -14,7 +14,6 @@ from OpenDataSoftCrawler import OpenDataSoftCrawler
 from setup_logger import logger
 from sys import exit
 import time
-from urllib.request import urlopen
 
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -153,7 +152,6 @@ class OpenDataCrawler():
 
                 logger.info("Saving... %s ", url)
 
-
                 with requests.get(url, stream=True, timeout=20, verify=False) as r:
                     if r.status_code == 200:
                         # Try to obtain the file name inside the link, else
@@ -169,22 +167,30 @@ class OpenDataCrawler():
 
                         # Write the content on a file
                         loader = requests.get(url, stream=True)
+
+                        encoding = "cp1252"
+                        if loader.apparent_encoding == 'utf-8':
+                            encoding = 'utf-8'
+                        if loader.apparent_encoding == 'iso8859_11':
+                            encoding = 'iso-8859-1'
+                        if loader.apparent_encoding == 'windows-1256':
+                            encoding = 'windows-1256'
                         lines = []
                         lines_csv = []
-                        max_lines = 50 # Max lines to download
+                        max_lines = 50  # Max lines to download
                         if 'datos.gob.es' in self.domain:
                             elements = url.split('/')
                             ext = 'csv' in elements[-1:][0]
-                            
+
                         for i, line in enumerate(loader.iter_lines()):
                             if line:
                                 if ext and i < max_lines:
-                                    decoded_line = line.decode('utf-8')
+                                    decoded_line = line.decode(encoding)
                                     lines_csv.append(decoded_line+"\n")
                                 elif ext and i >= max_lines:
                                     break
                                 elif not ext:
-                                    decoded_line = line.decode('utf-8')
+                                    decoded_line = line.decode(encoding)
                                     lines.append(decoded_line+"\n")
 
                         logger.info('Dataset partially saved from %s', url)
