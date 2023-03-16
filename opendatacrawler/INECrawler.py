@@ -15,43 +15,24 @@ class INECrawler(interface):
         
     def get_package_list(self):
         """Get all the operations ids"""
-        # total_ids = []
-        # response = requests.get(self.domain + '/wstempus/js/ES/OPERACIONES_DISPONIBLES')
-        # if response.status_code == 200:
-        #     operations = response.json()
-        #     if len(operations) > 0:
-        #         for p in operations:
-        #             total_ids.append(p['Id'])
-        # return total_ids
-        return [61, 62, 63]
+        total_ids = []
+        response = requests.get(self.domain + '/wstempus/js/ES/OPERACIONES_DISPONIBLES')
+        if response.status_code == 200:
+            operations = response.json()
+            if len(operations) > 0:
+                for p in operations:
+                    total_ids.append(p['Id'])
+        return total_ids
     
     def get_package(self, id):
         """Build a dict of elements metadata"""
         # operation_id = id
         operation_name = utils.get_operation_name(id)
-        # try:
-        #     res = requests.get('https://servicios.ine.es/wstempus/js/ES/TABLAS_OPERACION/' + str(id))
-        #     if res.status_code == 200:
-        #         tables = res.json()
-        #         if len(tables) > 0:
-        #             total_tables = []
-        #             for x in tables:
-        #                 a = dict()
-        #                 a['id'] = x['Id']
-        #                 total_tables.append(a)
-        #         logger.info(total_tables)
-        #         return total_tables
-        #     else:
-        #         return None
-        # except Exception as e:
-        #     logger.info(e)
-        #     return None
+
         try:
             response = requests.get('https://servicios.ine.es/wstempus/js/ES/TABLAS_OPERACION/' + str(id))
             if response.status_code == 200:
                 meta = response.json()
-                
-                
                 
                 if len(meta) > 0:
                     packages = []

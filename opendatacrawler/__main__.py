@@ -35,6 +35,10 @@ def main():
     parser.add_argument('-pd', '--partial_dataset', required=False,
                         action=argparse.BooleanOptionalAction,
                         help='Save partial dataset (default: not save)')
+    
+    parser.add_argument('-id', '--id_dataset', nargs='+', required=False,
+                        help="Save the dataset with that id"
+                        "(Ex. -id edu-alu-fpa-2021) (default: all)")
 
     args = vars(parser.parse_args())
 
@@ -46,6 +50,7 @@ def main():
     d_path = args['path']
     max_sec = args['max_seconds']
     partial = args['partial_dataset']
+    id = args['id_dataset']
 
     # Show the intro text
 
@@ -68,7 +73,10 @@ def main():
                 # Show info about the number of packages
                 logger.info("Obtaining packages from %s", url)
                 print("Obtaining packages from " + url)
-                packages = crawler.get_package_list()
+                if id:
+                    packages = id
+                else:
+                    packages = crawler.get_package_list()
                 logger.info("%i packages found", len(packages))
                 print(str(len(packages)) + " packages found!")
 
