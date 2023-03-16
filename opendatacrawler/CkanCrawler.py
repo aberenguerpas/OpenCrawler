@@ -98,14 +98,7 @@ class CkanCrawler(interface):
                 metadata['source'] = self.domain
 
                 # Saving all meta in a json file
-                try:
-                    with open(self.path + "/all_" + str(metadata['identifier']) + '.json',
-                            'w', encoding='utf-8') as f:
-                        json.dump(meta, f, ensure_ascii=False, indent=4)
-                except Exception as e:
-                    logger.error('Error saving metadata  %s',
-                                self.path + "/all_" + metadata['identifier'] + '.json')
-                    logger.error(e) 
+                utils.save_all_metadata(metadata['identifier'], meta, self.path)
 
                 return metadata
             else:
