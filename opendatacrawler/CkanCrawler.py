@@ -19,6 +19,7 @@ class CkanCrawler(interface):
 
         # Make a request to CKAN API to obtain the package list
         response = requests.get(self.domain+"/api/3/action/package_list", verify=False)
+       
 
         # Check if in the previous call there is a redirect
         # in this case, is used the package_searach endpoint
@@ -63,10 +64,12 @@ class CkanCrawler(interface):
         # Obtain a package with all their metadata
         try:
             url = self.domain + "/api/3/action/package_show?id=" + id
+
             response = requests.get(url, verify=False)
-    
+
             if response.status_code == 200:
                 meta = response.json()['result']
+                
 
                 metadata = dict()
 
@@ -93,7 +96,7 @@ class CkanCrawler(interface):
                 metadata['modified'] = meta.get('metadata_modified', None)
                 metadata['license'] = meta.get('license_title', None)
                 metadata['source'] = self.domain
-                
+
                 # Saving all meta in a json file
                 try:
                     with open(self.path + "/all_" + str(metadata['identifier']) + '.json',
