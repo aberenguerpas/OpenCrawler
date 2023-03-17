@@ -72,10 +72,10 @@ class INECrawler(interface):
                         metadata['spatial_coverage'] = None
                         
                         packages.append(metadata)
-
-                # Saving all meta in a json file
-                utils.save_all_metadata(id, meta, self.path)
-                logger.info(packages)
+                        
+                        # Saving all meta in a json file
+                        utils.save_all_metadata(metadata['id_custom'], x, self.path)                    
+                
                 return packages
             else:
                 return None

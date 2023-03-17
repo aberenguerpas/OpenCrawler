@@ -204,7 +204,7 @@ def save_all_metadata(id, meta, path):
         logger.error(e)
         
 def get_id_custom(name):
-    if name and name is not None and name != '':
+    if name and name != '':
         id = hashlib.md5()
         id.update(name.encode())
         return str(int(id.hexdigest(), 16))[0:12]

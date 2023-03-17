@@ -69,13 +69,15 @@ class CkanCrawler(interface):
 
             if response.status_code == 200:
                 meta = response.json()['result']
-                
 
                 metadata = dict()
 
-                metadata['identifier'] = id
+                metadata['id_portal'] = id
+                metadata['id_custom'] = utils.get_id_custom(metadata['id_portal'] + 'CKAN')
                 metadata['title'] = meta.get('title', None)
+                metadata['img_portal'] = None
                 metadata['description'] = meta.get('notes', None)
+                metadata['language'] = meta.get('language', None)
                 metadata['theme'] = meta.get('category', None)
 
                 if metadata['theme'] is None:
@@ -85,20 +87,31 @@ class CkanCrawler(interface):
                 for res in meta['resources']:
                     if (self.data_types is None or
                     res['format'].lower() in self.data_types):
-                        aux = dict()
-                        aux['name'] = res.get('name', None)
-                        aux['downloadUrl'] = res.get('url', None)
-                        aux['mediaType'] = res['format'].lower()
+                        resource = dict()
+                        resource['name'] = res.get('name', None)
+                        resource['mediaType'] = res['format'].lower()
+                        resource['size'] = res.get('size', None)
+                        resource['downloadUrl'] = res.get('url', None)
+                                
                         id = res.get('url', None).split("/")[-1].split(".")[0]
-                        resource_list.append(aux)
+                        resource_list.append(resource)
 
                 metadata['resources'] = resource_list
                 metadata['modified'] = meta.get('metadata_modified', None)
+                metadata['issued'] = meta.get('metadata_created', None)
                 metadata['license'] = meta.get('license_title', None)
                 metadata['source'] = self.domain
-
+                metadata['source_name'] = None
+                        
+                coverage = dict()
+                coverage['start_date'] = meta.get('temporal_begin_date', None)
+                coverage['end_date'] = meta.get('temporal_end_date', None)
+                        
+                metadata['temporal_coverage'] = [coverage]
+                metadata['spatial_coverage'] = None
+                
                 # Saving all meta in a json file
-                utils.save_all_metadata(metadata['identifier'], meta, self.path)
+                utils.save_all_metadata(metadata['id_custom'], meta, self.path)
 
                 return metadata
             else:
