@@ -89,9 +89,9 @@ class CkanCrawler(interface):
                     res['format'].lower() in self.data_types):
                         resource = dict()
                         resource['name'] = res.get('name', None)
-                        resource['mediaType'] = res['format'].lower()
+                        resource['mediaType'] = [res['format'].lower()]
                         resource['size'] = res.get('size', None)
-                        resource['downloadUrl'] = res.get('url', None)
+                        resource['downloadUrl'] = [res.get('url', None)]
                                 
                         id = res.get('url', None).split("/")[-1].split(".")[0]
                         resource_list.append(resource)
@@ -99,7 +99,7 @@ class CkanCrawler(interface):
                 metadata['resources'] = resource_list
                 metadata['modified'] = meta.get('metadata_modified', None)
                 metadata['issued'] = meta.get('metadata_created', None)
-                metadata['license'] = meta.get('license_title', None)
+                metadata['license'] = meta.get('license_id', None)
                 metadata['source'] = self.domain
                 metadata['source_name'] = None
                         

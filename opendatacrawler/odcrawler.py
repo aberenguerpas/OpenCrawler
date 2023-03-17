@@ -90,7 +90,7 @@ class OpenDataCrawler():
         if self.dms == 'Zenodo':
             self.dms_instance = ZenodoCrawler(self.domain)
         if self.dms == 'OpenDataSoft':
-            self.dms_instance = OpenDataSoftCrawler(self.domain)
+            self.dms_instance = OpenDataSoftCrawler(self.domain, self.save_path)
         if self.dms == 'INE':
             self.dms_instance = INECrawler(self.domain, self.save_path)
         if self.dms is None:
