@@ -150,12 +150,13 @@ class OpenDataCrawler():
 
     def save_partial_dataset(self, url, ext):
         """ Save a dataset from a given url and extension"""
+  
         try:
             # Web page is not consideret a dataset
             if url[-4] != 'html':
 
                 logger.info("Saving... %s ", url)
-
+               
                 with requests.get(url, stream=True, timeout=20, verify=False) as r:
                     if r.status_code == 200:
                         # Try to obtain the file name inside the link, else
@@ -213,6 +214,7 @@ class OpenDataCrawler():
                         return None
 
         except Exception as e:
+       
             logger.error('Error saving dataset from %s', url)
             logger.error(e)
             return None
@@ -220,12 +222,12 @@ class OpenDataCrawler():
     def save_metadata(self, data):
         """ Save the dict containing the metadata on a json file"""
         try:
-            with open(self.save_path + "/meta_"+str(data['id_portal'])+'.json',
+            with open(self.save_path + "/meta_"+str(data['identifier'])+'.json',
                       'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
         except Exception as e:
             logger.error('Error saving metadata  %s',
-                         self.save_path + "/meta_"+data['id_portal']+'.json')
+                         self.save_path + "/meta_"+data['identifier']+'.json')
             logger.error(e)
 
     def get_package_list(self):

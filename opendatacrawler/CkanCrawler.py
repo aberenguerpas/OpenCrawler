@@ -69,10 +69,8 @@ class CkanCrawler(interface):
 
             if response.status_code == 200:
                 meta = response.json()['result']
-                
 
                 metadata = dict()
-
                 metadata['identifier'] = id
                 metadata['title'] = meta.get('title', None)
                 metadata['description'] = meta.get('notes', None)
