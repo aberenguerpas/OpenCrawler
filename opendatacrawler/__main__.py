@@ -151,7 +151,8 @@ def main():
                                                         for elem in range(len(r['mediaType'])):
                                                             r['path'] = crawler.save_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
                                             else:
-                                                r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
+                                                for elem in r['downloadUrl']:
+                                                    r['path'] = crawler.save_dataset(elem, r['mediaType'])
                                             if r['path']:
                                                 break
                                             save_id = id
