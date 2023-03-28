@@ -110,8 +110,10 @@ class CkanCrawler(interface):
                 metadata['temporal_coverage'] = [coverage]
                 metadata['spatial_coverage'] = None
                 
+                metadata['file_name'] = str(metadata['id_custom']) + '-' + str(self.domain.split('.')[1]) + '-' + str(metadata['id_portal'])
+                
                 # Saving all meta in a json file
-                utils.save_all_metadata(metadata['id_custom'], meta, self.path)
+                utils.save_all_metadata(metadata['file_name'], meta, self.path)
 
                 return metadata
             else:
