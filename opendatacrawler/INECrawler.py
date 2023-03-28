@@ -71,11 +71,13 @@ class INECrawler(interface):
                         metadata['temporal_coverage'] = [coverage]
                         metadata['spatial_coverage'] = None
                         
+                        metadata['file_name'] = str(metadata['id_custom']) + '-INE-' + str(metadata['id_portal'])
+                        
                         packages.append(metadata)
-
-                # Saving all meta in a json file
-                utils.save_all_metadata(id, meta, self.path)
-                logger.info(packages)
+                        
+                        # Saving all meta in a json file
+                        utils.save_all_metadata(metadata['file_name'], x, self.path)                    
+                
                 return packages
             else:
                 return None

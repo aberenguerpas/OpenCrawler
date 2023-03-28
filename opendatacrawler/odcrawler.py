@@ -90,7 +90,7 @@ class OpenDataCrawler():
         if self.dms == 'Zenodo':
             self.dms_instance = ZenodoCrawler(self.domain)
         if self.dms == 'OpenDataSoft':
-            self.dms_instance = OpenDataSoftCrawler(self.domain)
+            self.dms_instance = OpenDataSoftCrawler(self.domain, self.save_path)
         if self.dms == 'INE':
             self.dms_instance = INECrawler(self.domain, self.save_path)
         if self.dms is None:
@@ -200,7 +200,6 @@ class OpenDataCrawler():
                         logger.info('Dataset partially saved from %s', url)
                         f = open(path, 'w', encoding='utf-8')
                         if ext == 'csv':
-
                             f.writelines(lines_csv)
                         else:
                             f.writelines(lines)
@@ -220,12 +219,12 @@ class OpenDataCrawler():
     def save_metadata(self, data):
         """ Save the dict containing the metadata on a json file"""
         try:
-            with open(self.save_path + "/meta_"+str(data['id_portal'])+'.json',
+            with open(self.save_path + "/meta_"+str(data['file_name'])+'.json',
                       'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
         except Exception as e:
             logger.error('Error saving metadata  %s',
-                         self.save_path + "/meta_"+data['id_portal']+'.json')
+                         self.save_path + "/meta_"+data['file_name']+'.json')
             logger.error(e)
 
     def get_package_list(self):

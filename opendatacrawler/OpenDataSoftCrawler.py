@@ -1,13 +1,15 @@
 import requests
 import traceback
+import utils
 from setup_logger import logger
 from opendatacrawlerInterface import OpenDataCrawlerInterface as interface
 
 
 class OpenDataSoftCrawler(interface):
     
-    def __init__(self, domain):
+    def __init__(self, domain, path):
         self.domain = domain
+        self.path = path
 
     def get_package_list(self):
         """Get all the packages ids"""
@@ -37,20 +39,24 @@ class OpenDataSoftCrawler(interface):
                 
                 metadata = dict()
                 
-                metadata['identifier'] = id
+                metadata['id_portal'] = id
+                metadata['id_custom'] = utils.get_id_custom(metadata['id_portal'] + 'OPENDATASOFT')
                 
                 dataset = meta_json.get('dataset', None)
                 
                 if dataset is not None:
-                    meta = dataset.get('metas', None).get('default', None)
-                    metadata['title'] = meta.get('title', None)
-                    metadata['description'] = meta.get('description', None)
-                    metadata['theme'] = meta.get('theme', None)
+                    meta_default = dataset.get('metas', None).get('default', None)
+                    meta_dcat = dataset.get('metas', None).get('dcat', None)
+                    metadata['title'] = meta_default.get('title', None)
+                    metadata['img_portal'] = None
+                    metadata['description'] = meta_default.get('description', None)
+                    metadata['language'] = meta_default.get('metadata_languages', None)
+                    metadata['theme'] = meta_default.get('theme', None)
                 
                     resource_list = []
                     mediaList = []
                     linkList = []
-                    aux = dict()
+                    resource = dict()
 
                     res = requests.get(self.domain + '/api/v2/catalog/datasets/' + str(id) + '/exports')
                     if res.status_code == 200:
@@ -61,15 +67,31 @@ class OpenDataSoftCrawler(interface):
                                 mediaList.append(m.get('rel', None))
                                 linkList.append(m.get('href', None))
                     
-                    aux['downloadUrl'] = linkList
-                    aux['mediaType'] = mediaList
+                    resource['downloadUrl'] = linkList
+                    resource['mediaType'] = mediaList
 
-                    resource_list.append(aux)
+                    resource_list.append(resource)
 
                     metadata['resources'] = resource_list
-                    metadata['modified'] = meta.get('modified', None)
-                    metadata['license'] = meta.get('license', None)
-                    metadata['source'] = self.domain
+                    metadata['modified'] = meta_default.get('modified', None)
+                    
+                    if meta_dcat:
+                        metadata['source'] = self.domain
+                        metadata['issued'] = meta_dcat.get('issued', None)
+                        metadata['license'] = meta_default.get('license', None)
+                        metadata['source_name'] = meta_dcat.get('creator', None)
+                        coverage = dict()
+                        coverage['start_date'] = meta_dcat.get('temporal_coverage_start', None)
+                        coverage['end_date'] = meta_dcat.get('temporal_coverage_end', None) 
+                        metadata['temporal_coverage'] = [coverage]
+                        metadata['spatial_coverage'] = meta_dcat.get('spatial', None)
+                    if self.domain.split('.')[1] == 'opendatasoft':
+                        metadata['file_name'] = str(metadata['id_custom']) + '-' + str(self.domain.split('//')[1].split('.')[0]) + '-' + str(metadata['id_portal'])
+                    else:
+                        metadata['file_name'] = str(metadata['id_custom']) + '-' + str(self.domain.split('.')[1]) + '-' + str(metadata['id_portal'])
+                # Saving all meta in a json file
+                utils.save_all_metadata(metadata['file_name'], meta_json, self.path)
+                
                 return metadata
             else:
                 return None
