@@ -73,7 +73,7 @@ class CkanCrawler(interface):
                 metadata = dict()
 
                 metadata['id_portal'] = id
-                metadata['id_custom'] = utils.get_id_custom(metadata['id_portal'] + 'CKAN')
+                metadata['id_custom'] = utils.get_id_custom(metadata['id_portal'] + self.domain)
                 metadata['title'] = meta.get('title', None)
                 metadata['img_portal'] = None
                 metadata['description'] = meta.get('notes', None)
