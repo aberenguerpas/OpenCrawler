@@ -46,7 +46,7 @@ class OpenDataSoftCrawler(interface):
                 
                 if dataset is not None:
                     meta_default = dataset.get('metas', None).get('default', None)
-                    # meta_dcat = dataset.get('metas', None).get('dcat', None)
+                    meta_dcat = dataset.get('metas', None).get('dcat', None)
                     metadata['title'] = meta_default.get('title', None)
                     metadata['img_portal'] = None
                     metadata['description'] = meta_default.get('description', None)
@@ -75,20 +75,22 @@ class OpenDataSoftCrawler(interface):
                     metadata['resources'] = resource_list
                     metadata['modified'] = meta_default.get('modified', None)
                     
-                    # metadata['issued'] = meta_dcat.get('issued', None)
-                    # metadata['license'] = meta_default.get('license', None)
-                    metadata['source'] = self.domain
-                    # metadata['source_name'] = meta_dcat.get('creator', None)
-                    
-                    # coverage = dict()
-                    # coverage['start_date'] = meta_dcat.get('temporal_coverage_start', None)
-                    # coverage['end_date'] = meta_dcat.get('temporal_coverage_end', None)
-                            
-                    # metadata['temporal_coverage'] = [coverage]
-                    # metadata['spatial_coverage'] = meta_dcat.get('spatial', None)
-                
+                    if meta_dcat:
+                        metadata['source'] = self.domain
+                        metadata['issued'] = meta_dcat.get('issued', None)
+                        metadata['license'] = meta_default.get('license', None)
+                        metadata['source_name'] = meta_dcat.get('creator', None)
+                        coverage = dict()
+                        coverage['start_date'] = meta_dcat.get('temporal_coverage_start', None)
+                        coverage['end_date'] = meta_dcat.get('temporal_coverage_end', None) 
+                        metadata['temporal_coverage'] = [coverage]
+                        metadata['spatial_coverage'] = meta_dcat.get('spatial', None)
+                    if self.domain.split('.')[1] == 'opendatasoft':
+                        metadata['file_name'] = str(metadata['id_custom']) + '-' + str(self.domain.split('//')[1].split('.')[0]) + '-' + str(metadata['id_portal'])
+                    else:
+                        metadata['file_name'] = str(metadata['id_custom']) + '-' + str(self.domain.split('.')[1]) + '-' + str(metadata['id_portal'])
                 # Saving all meta in a json file
-                utils.save_all_metadata(metadata['id_custom'], meta_json, self.path)
+                utils.save_all_metadata(metadata['file_name'], meta_json, self.path)
                 
                 return metadata
             else:
