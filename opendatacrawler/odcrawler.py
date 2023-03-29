@@ -150,7 +150,6 @@ class OpenDataCrawler():
 
     def save_partial_dataset(self, url, ext):
         """ Save a dataset from a given url and extension"""
-  
         try:
             # Web page is not consideret a dataset
             if url[-4] != 'html':
@@ -213,12 +212,12 @@ class OpenDataCrawler():
                         return None
 
         except Exception as e:
-       
             logger.error('Error saving dataset from %s', url)
             logger.error(e)
             return None
 
     def save_metadata(self, data):
+
         """ Save the dict containing the metadata on a json file"""
         try:
             with open(self.save_path + "/meta_"+str(data['file_name'])+'.json',

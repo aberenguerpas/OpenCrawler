@@ -41,7 +41,7 @@ class datosGobEsCrawler(interface):
               aux['downloadUrl'] = meta.get('accessURL', None)
         aux['mediaType'] = meta['format']['value']
         aux['size'] = meta.get('byteSize', None)
-        
+
         return aux
 
     def get_package(self, id):
@@ -120,14 +120,14 @@ class datosGobEsCrawler(interface):
                         metadata['geo'] = meta['spatial'].split("/")[-1:][0].replace('-',' ')
                 else:
                     # If no spatial is provided, try to extract some geo from description
-                    max=0
+                    max = 0
                     gana = ""
                     for i in metadata['description'].split(" "):
                         for j in self.provincias:
                             if Levenshtein.ratio(i, j)>max:
                                 max = Levenshtein.ratio(i, j)
                                 gana = i
-                        if max>0.8:
+                        if max > 0.8:
                             place = gana
                             place = place.replace(',',' ')
                         else:

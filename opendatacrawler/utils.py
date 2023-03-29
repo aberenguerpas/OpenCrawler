@@ -191,7 +191,8 @@ def get_operation_name(id):
         print(traceback.format_exc())
         logger.info(e)
         return None
-    
+
+
 def save_all_metadata(id, meta, path): 
     # Saving all meta in a json file
     try:
@@ -202,7 +203,8 @@ def save_all_metadata(id, meta, path):
         logger.error('Error saving metadata  %s',
                     path + "/all_" + str(id) + '.json')
         logger.error(e)
-        
+
+
 def get_id_custom(name):
     if name and name != '':
         id = hashlib.md5()

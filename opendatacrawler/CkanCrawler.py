@@ -1,7 +1,6 @@
 import requests
 import urllib3
 import utils
-import json
 from setup_logger import logger
 from opendatacrawlerInterface import OpenDataCrawlerInterface as interface
 
@@ -19,7 +18,6 @@ class CkanCrawler(interface):
 
         # Make a request to CKAN API to obtain the package list
         response = requests.get(self.domain+"/api/3/action/package_list", verify=False)
-       
 
         # Check if in the previous call there is a redirect
         # in this case, is used the package_searach endpoint
@@ -73,7 +71,7 @@ class CkanCrawler(interface):
                 metadata = dict()
 
                 metadata['id_portal'] = id
-                metadata['id_custom'] = utils.get_id_custom(metadata['id_portal'] + self.domain)
+                metadata['id_custom'] = utils.get_id_custom(metadata['id_portal']+self.domain)
                 metadata['title'] = meta.get('title', None)
                 metadata['img_portal'] = None
                 metadata['description'] = meta.get('notes', None)

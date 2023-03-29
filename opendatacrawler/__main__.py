@@ -102,14 +102,12 @@ def main():
                         if package:
                             if crawler.dms == 'INE':
                                 for elem in package:
-                                  
                                     if args['categories'] and elem['theme']:
                                         exist_cat = any(cat in elem['theme'] for cat in categories)
                                     else:
                                         exist_cat = True
 
                                     resources_save = False
-                                    
                                     if len(elem['resources']) > 0 and exist_cat:
                                         for r in elem['resources']:
                                             if(r['downloadUrl'] and r['mediaType'] != ""):
