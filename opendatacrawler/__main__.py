@@ -134,25 +134,35 @@ def main():
                                 if len(package['resources']) > 0 and exist_cat:
                                     for r in package['resources']:
                                         if(not avoid_data and r['downloadUrl'] and r['mediaType'] != ""):
-                                            if partial:
-                                                if crawler.dms == 'OpenDataSoft':
-                                                    for elem in range(len(r['mediaType'])):
-                                                        r['path'] = crawler.save_partial_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
+                                            if crawler.dms == 'OpenDataSoft':
+                                                if d_types:
+                                                    for d_type in d_types:
+                                                        if d_type in r['mediaType']:
+                                                            if partial:
+                                                                r['path'] = crawler.save_partial_dataset(r['downloadUrl'][r['mediaType'].index(d_type)], d_type)
+                                                            else:
+                                                                r['path'] = crawler.save_dataset(r['downloadUrl'][r['mediaType'].index(d_type)], d_type)
                                                 else:
-                                                    if crawler.dms == 'OpenDataSoft':
-                                                        if d_types:
-                                                            for d_type in d_types:
-                                                                if d_type in r['mediaType']:
-                                                                    r['path'] = crawler.save_dataset(r['downloadUrl'][r['mediaType'].index(d_type)], d_type)
-                                                        else:
-                                                            for elem in range(len(r['mediaType'])):
-                                                                r['path'] = crawler.save_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
+                                                    if partial:
+                                                        for elem in range(len(r['mediaType'])):
+                                                            r['path'] = crawler.save_partial_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
                                                     else:
                                                         for elem in range(len(r['mediaType'])):
                                                             r['path'] = crawler.save_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
                                             else:
-                                                for elem in r['downloadUrl']:
-                                                    r['path'] = crawler.save_dataset(elem, r['mediaType'])
+                                                if d_types:
+                                                    for d_type in d_types:
+                                                        if d_type == r['mediaType'][0]:
+                                                            if partial:
+                                                                r['path'] = crawler.save_partial_dataset(r['downloadUrl'][0], d_type)
+                                                            else:
+                                                                r['path'] = crawler.save_dataset(r['downloadUrl'][0], d_type)
+                                                else:
+                                                    if partial:
+                                                        r['path'] = crawler.save_partial_dataset(r['downloadUrl'][0], r['mediaType'][0])
+                                                    else:
+                                                        r['path'] = crawler.save_dataset(r['downloadUrl'][0], r['mediaType'][0])
+                                            
                                             if r['path']:
                                                 break
                                             save_id = id
