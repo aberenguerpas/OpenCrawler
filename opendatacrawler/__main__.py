@@ -151,17 +151,19 @@ def main():
                                                             r['path'] = crawler.save_dataset(r['downloadUrl'][elem], r['mediaType'][elem])
                                             else:
                                                 if d_types:
-                                                    for d_type in d_types:
-                                                        if d_type == r['mediaType'][0]:
+                                                    for d_type in ['csv']:
+
+                                                        if d_type == r['mediaType']:
                                                             if partial:
-                                                                r['path'] = crawler.save_partial_dataset(r['downloadUrl'][0], d_type)
+                                                                r['path'] = crawler.save_partial_dataset(r['downloadUrl'], d_type)
                                                             else:
-                                                                r['path'] = crawler.save_dataset(r['downloadUrl'][0], d_type)
+                                                                r['path'] = crawler.save_dataset(r['downloadUrl'], d_type)
                                                 else:
                                                     if partial:
-                                                        r['path'] = crawler.save_partial_dataset(r['downloadUrl'][0], r['mediaType'][0])
+                                                        r['path'] = crawler.save_partial_dataset(r['downloadUrl'], r['mediaType'])
                                                     else:
-                                                        r['path'] = crawler.save_dataset(r['downloadUrl'][0], r['mediaType'][0])
+                                      
+                                                        r['path'] = crawler.save_dataset(r['downloadUrl'], r['mediaType'])
                                             
                                             if r['path']:
                                                 break
